@@ -12,6 +12,10 @@ export default {
         background: "var(--background)",
         foreground: "var(--foreground)",
       },
+      fontFamily: {
+        'great-vibes': ['Great Vibes', 'cursive'],
+        'poppins': ['Poppins', 'sans-serif'],
+      }
     },
   },
   darkMode: 'class',
