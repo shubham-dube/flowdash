@@ -1,4 +1,5 @@
 'use client';
+import ThemeToggle from "@/app/utils/toggleTheme"
 import Link from 'next/link';
 import { useState } from 'react';
 
@@ -41,6 +42,7 @@ const MyHeader = () => {
               Sign Up
             </button>
           </Link>
+          <ThemeToggle/>
         </div>
 
         {/* Mobile Menu Icon */}
@@ -87,6 +89,8 @@ const MyHeader = () => {
                 Sign Up
               </Link>
             </li>
+
+            <ThemeToggle/>
           </ul>
         </nav>
       )}

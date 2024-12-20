@@ -2,7 +2,7 @@ import ThemeProvider from '../context/ThemeProvider';
 import './globals.css';
 
 export const metadata = {
-  title: 'Task Manager',
+  title: 'FlowDash',
   description: 'Manage Team and their tasks easily and also collaborate in real time',
 };
 

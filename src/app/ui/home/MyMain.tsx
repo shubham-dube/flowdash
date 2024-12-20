@@ -1,6 +1,5 @@
 'use-client'
 
-import ThemeToggle from "@/app/utils/toggleTheme"
 import Link from "next/link"
 
 const MyMain = ()=>{
@@ -17,13 +16,13 @@ const MyMain = ()=>{
         <p className="mt-4 text-gray-600 dark:text-gray-200">
           Manage your tasks efficiently and collaborate in real-time.
         </p>
-        <Link href="/login">
+        <Link href="/signin">
           <button className="mt-6 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">
             Get Started
           </button>
         </Link>
         <br />
-        <ThemeToggle/>
+        
       </main>
     )
 }
