@@ -2,10 +2,11 @@
 
 import { FaEnvelope, FaLock } from "react-icons/fa";
 import { signInWithEmailAndPassword, GoogleAuthProvider, signInWithPopup, sendSignInLinkToEmail } from 'firebase/auth';
-import { auth } from "@/app/utils/firebaseConfig";
+import { auth } from "@/lib/firebaseConfig";
 import { useState } from "react";
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
+import Cookies from 'js-cookie';
 
 export const LoginAuth = () => {
     const router = useRouter();
@@ -18,7 +19,7 @@ export const LoginAuth = () => {
         const response = await loginWithEmail(email, password);
         if (response.success) {
             setError(null);
-            console.log(response.user)
+            
             router.push('/');
         } else {
             setError(response.message);
@@ -30,7 +31,9 @@ export const LoginAuth = () => {
         const response = await loginWithGoogle();
         if (response.success) {
             setError(null);
-            console.log(response.user)
+            const token = await response.user.accessToken;
+            console.log(token);
+            Cookies.set('authToken', token, { expires: 7 });
             router.push('/');
         } else {
             setError(response.message);

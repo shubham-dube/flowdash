@@ -4,11 +4,11 @@ const nextConfig: NextConfig = {
   async headers() {
     return [
       {
-        source: '/api/:path*',
+        source: '/api/:path*', 
         headers: [
           {
             key: 'Access-Control-Allow-Origin',
-            value: 'team-app-fad7f.firebaseapp.com/', 
+            value: 'https://team-app-fad7f.firebaseapp.com',
           },
           {
             key: 'Access-Control-Allow-Headers',
@@ -20,13 +20,8 @@ const nextConfig: NextConfig = {
           },
           {
             key: 'Access-Control-Allow-Credentials',
-            value: 'true', 
+            value: 'true',
           },
-          {
-            key: 'Access-Control-Allow-Origin',
-            value: 'accounts.google.com/', 
-          },
-         
         ],
       },
     ];
@@ -34,3 +29,12 @@ const nextConfig: NextConfig = {
 };
 
 export default nextConfig;
+
+module.exports = {
+  async rewrites() {
+    return [
+      { source: '/dashboard', destination: '/protected/dashboard' },
+      { source: '/profile', destination: '/protected/profile' },
+    ];
+  },
+};

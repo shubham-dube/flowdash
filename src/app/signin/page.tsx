@@ -1,8 +1,8 @@
 'use client';
 
 import React from 'react';
-import MyHeader from '../ui/home/MyHeader';
-import {LoginAuth} from "@/app/utils/auth";
+import MyHeader from '../components/home/MyHeader';
+import {LoginAuth} from "@/app/components/authentication/forms";
 import Link from 'next/link';
 
 const LoginPage = () => {

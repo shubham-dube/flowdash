@@ -1,6 +1,6 @@
 'use client';
-import MyHeader from "./ui/home/MyHeader";
-import MyMain from './ui/home/MyMain';
+import MyHeader from "./components/home/MyHeader";
+import MyMain from './components/home/MyMain';
 
 export default function HomePage() {
   return (
