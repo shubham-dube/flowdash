@@ -45,9 +45,9 @@ const taskSchema: Schema = new mongoose.Schema({
     deadline: {
         type: Date,
     },
-    comments: {
-        type: [{ type: Schema.Types.ObjectId, ref: 'Comments' }],
-    },
+    // comments: {
+    //     type: [{ type: Schema.Types.ObjectId, ref: 'Comments' }],
+    // },
     createdAt: {
         type: Date,
         default: Date.now()

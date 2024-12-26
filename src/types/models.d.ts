@@ -37,7 +37,7 @@ interface ITask extends Document{
     status: 'to-do' | 'in-progress' | 'completed' | 'blocked' | 'in-review';
     priority: 'very-low' | 'low' | 'medium' | 'high' | 'very-high';
     deadline: Date;
-    comments: Types.ObjectId[];
+    // comments: Types.ObjectId[];
     createdAt: Date;
     lastUpdated: Date;
     isWorkingNow: boolean;
