@@ -9,10 +9,9 @@ const DashboardPage = async () => {
   }
 
   return (
-    <div>
-      <h1>Welcome to Your Dashboard!</h1>
-      <p>This is a protected page accessible only to authenticated users.</p>
-    </div>
+    <main>
+
+    </main>
   );
 };
 

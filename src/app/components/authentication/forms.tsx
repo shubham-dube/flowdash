@@ -7,6 +7,7 @@ import { useState } from "react";
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 import Cookies from 'js-cookie';
+import { IUser } from "@/types/models";
 
 export const LoginAuth = () => {
     const router = useRouter();
@@ -19,22 +20,40 @@ export const LoginAuth = () => {
         const response = await loginWithEmail(email, password);
         if (response.success) {
             setError(null);
-            
-            router.push('/');
+            router.push('/dashboard');
         } else {
             setError(response.message);
         }
     };
 
     const handleGoogleAuthentication = async () => {
-        console.log('started');
         const response = await loginWithGoogle();
         if (response.success) {
             setError(null);
-            const token = await response.user.accessToken;
-            console.log(token);
-            Cookies.set('authToken', token, { expires: 7 });
-            router.push('/');
+
+            try {
+                const token = await response.user.accessToken;
+                const res = await fetch(`/api/user?getOneUser=true&email=${response.user.email}`, {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`,
+                    },
+                });
+    
+                const result = await res.json();
+                if (res.ok) {
+                    Cookies.set('authToken', token, { expires: 30 });
+
+                    setError(null);
+                    router.push('/dashboard');
+                } else {
+                    setError(result.message);
+                }
+            } catch (error) {
+                console.log(error);
+                setError('Something went wrong.');
+            }
         } else {
             setError(response.message);
         }
@@ -170,12 +189,40 @@ export const SignupAuth = () => {
     };
 
     const handleGoogleAuthentication = async () => {
-        console.log('started');
         const response = await loginWithGoogle();
         if (response.success) {
-            setError(null);
-            console.log(response.user)
-            router.push('/');
+
+            try {
+                const token = await response.user.accessToken;
+                const reqBody: Partial<IUser> = {
+                    email: response.user.email,
+                    displayName: response.user.displayName,
+                    photoUrl: response.user.photoURL,
+                    firebaseId: response.user.uid,
+                }
+                const res = await fetch('/api/user', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`,
+                    },
+                    body: JSON.stringify(reqBody),
+                });
+    
+                const result = await res.json();
+                if (res.ok) {
+                    Cookies.set('authToken', token, { expires: 30 });
+
+                    setError(null);
+                    router.push('/dashboard');
+                } else {
+                    setError(result.message);
+                }
+            } catch (error) {
+                console.log(error);
+                setError('Something went wrong.');
+            }
+
         } else {
             setError(response.message);
         }
@@ -241,7 +288,7 @@ export const SignupAuth = () => {
 const sendLoginLinktoEmail = async (email: string) => {
     try {
         const actionCodeSettings = {
-            url: 'http://localhost:3000/signin',
+            url: 'http://localhost:3000/dashboard',
             handleCodeInApp: true,
           };
         await sendSignInLinkToEmail(auth, email, actionCodeSettings); 

@@ -1,5 +1,6 @@
 'use client';
 import ThemeToggle from "@/lib/toggleTheme"
+import Image from "next/image";
 import Link from 'next/link';
 import { useState } from 'react';
 
@@ -11,7 +12,36 @@ const MyHeader = () => {
       <div className="container mx-auto flex items-center justify-between px-6 py-4">
         {/* Logo */}
         <Link href="/" className="text-2xl font-bold text-gray-800 dark:text-gray-200">
-          FlowDash
+          <div className="items-center flex gap-3 dark:hidden">
+          <Image
+                src="/logo-blue.png"
+                alt="website-name"
+                width={40} 
+                height={40}
+            />
+          <Image
+                src="/website-name-blue.png"
+                alt="website-name"
+                width={100} 
+                height={16}
+                className="mr-2" 
+            />
+          </div>
+          <div className="items-center hidden dark:flex gap-3">
+          <Image
+                src="/logo-white.png"
+                alt="website-name"
+                width={40} 
+                height={40}
+            />
+          <Image
+                src="/website-name-white.png"
+                alt="website-name"
+                width={100} 
+                height={16}
+                className="mr-2" 
+            />
+          </div>
         </Link>
 
         {/* Navbar */}

@@ -34,7 +34,7 @@ export const getTask = async (query: FilterQuery<ITask>) => {
 
 export const getTasksByQuery = async (query: FilterQuery<ITask>, limit: number = 50, skip: number = 0) => {
     try {
-        const tasks = await TaskModel.find(query).limit(limit).skip(skip);
+        const tasks = await TaskModel.find(query).limit(limit).skip(skip).populate('projectId assignedTo assignedBy reviewedBy');;
         return { message: 'Tasks retrieved successfully', isError: false, tasks: tasks };
     } catch (error: any) {
         console.error('Error fetching tasks by query:', error);
