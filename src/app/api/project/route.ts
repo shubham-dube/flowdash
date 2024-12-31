@@ -31,6 +31,14 @@ export async function GET(request: Request) {
         return NextResponse.json(result, { status: statusCode });
     }
 
+    if(searchParams.has('search')) {
+        const search = searchParams.get('search');
+        dbQuery.$or = [
+            { title: { $regex: search, $options: 'i' } },
+            { description: { $regex: search, $options: 'i' } }
+        ];
+    }
+
     // Filters
     if (searchParams.has('createdBy')) {
         dbQuery.createdBy = searchParams.get('createdBy');

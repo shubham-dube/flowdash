@@ -30,27 +30,53 @@ export async function GET(request: Request) {
         return NextResponse.json(result, { status: 200 });
     }
 
+    if(searchParams.has('search')) {
+        const search = searchParams.get('search');
+        dbQuery.$or = [
+            { title: { $regex: search, $options: 'i' } },
+            { description: { $regex: search, $options: 'i' } }
+        ];
+    }
+    
     // Filters
     if (searchParams.has('projectId')) {
-        dbQuery.projectId = searchParams.get('projectId');
+        const projectIds = searchParams.get('projectId');
+        if (projectIds) {
+            dbQuery.projectId = { $in: projectIds.split(',') }; 
+        }
     }
     if (searchParams.has('assignedBy')) {
         dbQuery.assignedBy = searchParams.get('assignedBy');
     }
     if (searchParams.has('assignedTo')) {
-        dbQuery.assignedTo = { $in: [searchParams.get('assignedTo')] };
+        const assignedToValues = searchParams.get('assignedTo');
+        if (assignedToValues) {
+            dbQuery.assignedTo = { $in: assignedToValues.split(',') }; 
+        }
     }
     if (searchParams.has('reviewedBy')) {
-        dbQuery.reviewedBy = { $in: [searchParams.get('reviewedBy')] };
+        const reviewedByValues = searchParams.get('reviewedBy');
+        if (reviewedByValues) {
+            dbQuery.reviewedBy = { $in: reviewedByValues.split(',') }; 
+        }
     }
     if (searchParams.has('createdBy')) {
-        dbQuery.createdBy = searchParams.get('createdBy');
+        const createdByValues = searchParams.get('createdBy');
+        if (createdByValues) {
+            dbQuery.createdBy = { $in: createdByValues.split(',') }; 
+        }
     }
     if (searchParams.has('status')) {
-        dbQuery.status = searchParams.get('status');
+        const statusValues = searchParams.get('status');
+        if (statusValues) {
+            dbQuery.status = { $in: statusValues.split(',') }; 
+        }
     }
     if (searchParams.has('priority')) {
-        dbQuery.priority = searchParams.get('priority');
+        const priorityValues = searchParams.get('priority');
+        if (priorityValues) {
+            dbQuery.priority = { $in: priorityValues.split(',') };
+        }
     }
     if (searchParams.has('deadlineBefore')) {
         dbQuery.deadline = { $lte: new Date(searchParams.get('deadlineBefore')!) };
@@ -76,16 +102,16 @@ export async function GET(request: Request) {
 
 // PUT: Update a task
 export async function PUT(request: Request) {
-    const { id, ...updateData } = await request.json();
+    const { _id, ...updateData } = await request.json();
 
-    if (!id) {
+    if (!_id) {
         return NextResponse.json(
             { message: 'Task ID is required', isError: true, task: null },
             { status: 400 }
         );
     }
 
-    const result = await updateTask({ _id: id }, updateData);
+    const result = await updateTask({ _id: _id }, updateData);
     const statusCode = result.isError ? (result.message.includes('not found') ? 404 : 500) : 200;
     return NextResponse.json(result, { status: statusCode });
 }

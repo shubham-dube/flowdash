@@ -31,10 +31,14 @@ const nextConfig: NextConfig = {
 export default nextConfig;
 
 module.exports = {
+  images: {
+    domains: ['lh3.googleusercontent.com'],
+  },
   async rewrites() {
     return [
       { source: '/dashboard', destination: '/protected/dashboard' },
       { source: '/profile', destination: '/protected/profile' },
+      { source: '/tasks', destination: '/protected/tasks' },
     ];
   },
 };

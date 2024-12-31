@@ -2,17 +2,20 @@
 
 import ThemeToggle from "@/lib/toggleTheme";
 import Link from "next/link";
+import { FaCompress, FaExpand } from "react-icons/fa";
 import { FiMenu, FiBell, FiUser } from "react-icons/fi";
 
 interface TopbarProps {
   toggleMobileSidebar: () => void;
   selectedTab: string;
   changeTab: (tabName: string) => void;
+  toggleFullScreen: () => void;
+  isFullScreen: boolean;
 }
 
-const Topbar: React.FC<TopbarProps> = ({ toggleMobileSidebar, selectedTab, changeTab }) => {
+const Topbar: React.FC<TopbarProps> = ({ toggleMobileSidebar, selectedTab, changeTab, toggleFullScreen, isFullScreen }) => {
   return (
-    <header className="bg-white dark:bg-gray-800 shadow-md">
+    <header className="bg-white w-full dark:bg-gray-800 shadow-md">
       <div className="flex items-center justify-between px-4 py-3 md:px-6">
 
         <div className="flex items-center gap-4">
@@ -26,6 +29,8 @@ const Topbar: React.FC<TopbarProps> = ({ toggleMobileSidebar, selectedTab, chang
         </div>
 
         <div className="flex items-center gap-8">
+          <button className="text-gray-700 dark:text-gray-200" onClick={() => { toggleFullScreen() }}>{!isFullScreen ? <FaExpand/> : <FaCompress />}</button>
+
           <ThemeToggle/>
 
             <Link href={"/notifications"} onClick={() => changeTab("Notifications")}>

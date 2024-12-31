@@ -1,5 +1,5 @@
 import { IProject } from '@/types/models';
-import mongoose, { Schema, Model } from 'mongoose';
+import mongoose, { Schema } from 'mongoose';
 
 const projectSchema: Schema = new mongoose.Schema({
     title: {
@@ -42,4 +42,4 @@ const projectSchema: Schema = new mongoose.Schema({
     },
 });
 
-export const ProjectModel: Model<IProject> = mongoose.model<IProject>('Projects', projectSchema);
+export const ProjectSchema: Schema<IProject> =  projectSchema;

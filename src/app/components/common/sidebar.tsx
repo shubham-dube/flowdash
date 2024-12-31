@@ -24,13 +24,13 @@ const Sidebar: React.FC<SidebarProps> = ({ isMobileOpen, toggleMobileSidebar, se
   return (
     <>
       {/* Desktop Sidebar */}
-      <div className="hidden md:block w-64 bg-white dark:bg-gray-800 shadow-md h-full">
+      <div className="hidden md:block w-64 bg-white dark:bg-gray-800 shadow-md fixed h-full">
         {renderSidebarContent()}
       </div>
 
       {/* Mobile Sidebar */}
       {isMobileOpen && (
-        <div className="fixed inset-0 z-50 flex">
+        <div className="fixed inset-0 z-50 flex fixed">
           <div className="w-64 bg-white dark:bg-gray-800 shadow-md h-full">
             {renderSidebarContent()}
           </div>

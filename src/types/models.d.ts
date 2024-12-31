@@ -15,9 +15,9 @@ interface IProject extends Document{
     _id: Types.ObjectId; 
     title: string;
     description: string;
-    createdBy: Types.ObjectId;
-    teamMembers: Types.ObjectId[]; 
-    tasks: Types.ObjectId[];
+    createdBy: Types.ObjectId | IUser;
+    teamMembers: Types.ObjectId[] | IUser[]; 
+    tasks: Types.ObjectId[] | ITask[];
     createdAt: Date;
     deadline: Date;
     endDate: Date;
@@ -27,17 +27,17 @@ interface IProject extends Document{
 
 interface ITask extends Document{
     _id: Types.ObjectId; 
-    projectId: Types.ObjectId; 
-    assignedTo: Types.ObjectId[]; 
-    assignedBy: Types.ObjectId; 
-    reviewedBy: Types.ObjectId[];
+    projectId: Types.ObjectId | IProject; 
+    assignedTo: Types.ObjectId[] | IUser[]; 
+    assignedBy: Types.ObjectId | IUser; 
+    reviewedBy: Types.ObjectId[] | IUser[];
     createdBy: Types.ObjectId; 
     title: string;
     description: string;
-    status: 'to-do' | 'in-progress' | 'completed' | 'blocked' | 'in-review';
-    priority: 'very-low' | 'low' | 'medium' | 'high' | 'very-high';
-    deadline: Date;
-    // comments: Types.ObjectId[];
+    status: 'to-do' | 'in-progress' | 'completed' | 'blocked' | 'in-review' | string;
+    priority: 'very-low' | 'low' | 'medium' | 'high' | 'very-high' | string;
+    deadline: Date | null;
+    comments: Types.ObjectId[] | [];
     createdAt: Date;
     lastUpdated: Date;
     isWorkingNow: boolean;

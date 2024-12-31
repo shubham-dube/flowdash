@@ -34,11 +34,13 @@ export const getTask = async (query: FilterQuery<ITask>) => {
 
 export const getTasksByQuery = async (query: FilterQuery<ITask>, limit: number = 50, skip: number = 0) => {
     try {
-        const tasks = await TaskModel.find(query).limit(limit).skip(skip).populate('projectId assignedTo assignedBy reviewedBy');;
-        return { message: 'Tasks retrieved successfully', isError: false, tasks: tasks };
+        const totalCount = await TaskModel.countDocuments(query);
+        const tasks = await TaskModel.find(query).limit(limit).skip(skip).sort({ lastUpdated: -1 }).populate('projectId assignedTo assignedBy reviewedBy');
+        const totalPages = Math.ceil(totalCount / limit);
+        return { message: 'Tasks retrieved successfully',totalCount: totalCount, totalPages: totalPages, isError: false, tasks: tasks };
     } catch (error: any) {
         console.error('Error fetching tasks by query:', error);
-        return { message: error.message || 'Error retrieving tasks', isError: true, tasks: null };
+        return { message: error.message || 'Error retrieving tasks',totalCount: 0, totalPages: 0, isError: true, tasks: null };
     }
 };
 

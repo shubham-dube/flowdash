@@ -1,7 +1,8 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 'use-client'
 
 import { FaEnvelope, FaLock } from "react-icons/fa";
-import { signInWithEmailAndPassword, GoogleAuthProvider, signInWithPopup, sendSignInLinkToEmail } from 'firebase/auth';
+import { signInWithEmailAndPassword, GoogleAuthProvider, signInWithPopup, sendSignInLinkToEmail, User } from 'firebase/auth';
 import { auth } from "@/lib/firebaseConfig";
 import { useState } from "react";
 import { useRouter } from 'next/navigation';
@@ -20,7 +21,34 @@ export const LoginAuth = () => {
         const response = await loginWithEmail(email, password);
         if (response.success) {
             setError(null);
-            router.push('/dashboard');
+            try {
+                const authToken = await (response.user as any).accessToken;
+                const reqBody: Partial<IUser> = {
+                    email: (response.user as any).email
+                }
+                const res = await fetch('/api/user/signin', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(reqBody),
+                });
+    
+                const result = await res.json();
+                console.log(result.token);
+                if (res.ok) {
+                    Cookies.set('authToken', authToken, { expires: 30 });
+                    Cookies.set('jwtToken', result.token, { expires: 30 });
+
+                    setError(null);
+                    router.push('/dashboard');
+                } else {
+                    setError(result.message);
+                }
+            } catch (error) {
+                console.log(error);
+                setError('Something went wrong.');
+            }
         } else {
             setError(response.message);
         }
@@ -32,18 +60,23 @@ export const LoginAuth = () => {
             setError(null);
 
             try {
-                const token = await response.user.accessToken;
-                const res = await fetch(`/api/user?getOneUser=true&email=${response.user.email}`, {
-                    method: 'GET',
+                const authToken = await (response.user as any).accessToken;
+                const reqBody: Partial<IUser> = {
+                    email: (response.user as any).email
+                }
+                const res = await fetch('/api/user/signin', {
+                    method: 'POST',
                     headers: {
-                        'Content-Type': 'application/json',
-                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
                     },
+                    body: JSON.stringify(reqBody),
                 });
     
                 const result = await res.json();
+                console.log(result.token);
                 if (res.ok) {
-                    Cookies.set('authToken', token, { expires: 30 });
+                    Cookies.set('authToken', authToken, { expires: 30 });
+                    Cookies.set('jwtToken', result.token, { expires: 30 });
 
                     setError(null);
                     router.push('/dashboard');
@@ -157,8 +190,7 @@ const loginWithEmail = async (email: string, password: string) => {
 const loginWithGoogle = async () => {
     const provider = new GoogleAuthProvider();
     try {
-        const result = await signInWithPopup(auth, provider);
-        const user = result.user;
+        const user: User = (await signInWithPopup(auth, provider)).user;
         console.log('User logged in with Google:', user);
         return { success: true, user: user, message: "User Successfully logged In" };
     } catch (error: any) {
@@ -193,25 +225,26 @@ export const SignupAuth = () => {
         if (response.success) {
 
             try {
-                const token = await response.user.accessToken;
+                const authToken = await (response.user as any).accessToken;
                 const reqBody: Partial<IUser> = {
-                    email: response.user.email,
-                    displayName: response.user.displayName,
-                    photoUrl: response.user.photoURL,
-                    firebaseId: response.user.uid,
+                    email: (response.user as any).email,
+                    displayName: (response.user as any).displayName,
+                    photoUrl: (response.user as any).photoURL,
+                    firebaseId: (response.user as any).uid,
                 }
-                const res = await fetch('/api/user', {
+                const res = await fetch('/api/user/signup', {
                     method: 'POST',
                     headers: {
-                        'Content-Type': 'application/json',
-                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
                     },
                     body: JSON.stringify(reqBody),
                 });
     
                 const result = await res.json();
+                console.log(result);
                 if (res.ok) {
-                    Cookies.set('authToken', token, { expires: 30 });
+                    Cookies.set('authToken', authToken, { expires: 30 });
+                    Cookies.set('jwtToken', result.token, { expires: 30 });
 
                     setError(null);
                     router.push('/dashboard');

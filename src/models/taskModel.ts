@@ -1,5 +1,5 @@
 import { ITask } from '@/types/models';
-import mongoose, { Schema, Model } from 'mongoose';
+import mongoose, { Schema } from 'mongoose';
 
 const taskSchema: Schema = new mongoose.Schema({
     projectId: {
@@ -54,6 +54,7 @@ const taskSchema: Schema = new mongoose.Schema({
     },
     lastUpdated: {
         type: Date,
+        default: Date.now()
     },
     isWorkingNow: {
         type: Boolean,
@@ -61,4 +62,4 @@ const taskSchema: Schema = new mongoose.Schema({
     },
 });
 
-export const TaskModel: Model<ITask> = mongoose.model<ITask>('Tasks', taskSchema);
+export const TaskSchema: Schema<ITask> = taskSchema;
