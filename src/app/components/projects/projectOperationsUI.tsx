@@ -1,13 +1,14 @@
-import { TaskOperationsUIProps } from '@/types/ui.props';
+import { ProjectOperationsUIProps } from '@/types/ui.props';
 import { FaFilter, FaList, FaPlus, FaSearch, FaTh} from 'react-icons/fa';
 
-const TaskOperationsUI: React.FC<TaskOperationsUIProps> = ({setSearchQuery, setCurrentPage, setShowFilterPopup, 
-    setShowCreateTaskPopup, setIsCardView, isCardView}) => {
+const ProjectOperationsUI: React.FC<ProjectOperationsUIProps> = ({setSearchQuery, setCurrentPage, setShowFilterPopup, 
+    setShowCreateProjectPopup, setIsCardView, isCardView}) => {
+      
     return (
         <div className="flex flex-col w-full mt-4 p-4 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-md">
         <div className="flex items-center justify-between w-full space-x-4">
   
-          <h2 className="text-lg font-semibold text-gray-800 dark:text-gray-200">Tasks</h2>
+          <h2 className="text-lg font-semibold text-gray-800 dark:text-gray-200">Projects</h2>
   
           <div className="flex-grow mx-4 relative">
             <FaSearch className="absolute left-3 top-3 text-gray-500 dark:text-gray-400" />
@@ -17,7 +18,7 @@ const TaskOperationsUI: React.FC<TaskOperationsUIProps> = ({setSearchQuery, setC
                 setCurrentPage(1);
               }}
               type="text"
-              placeholder="Search tasks..."
+              placeholder="Search Projects..."
               className="w-full pl-10 pr-4 py-2 bg-transparent border border-gray-300 dark:border-gray-700 rounded-lg text-gray-800 dark:text-gray-200 focus:ring-2 focus:ring-blue-500 focus:outline-none"
             />
           </div>
@@ -35,9 +36,9 @@ const TaskOperationsUI: React.FC<TaskOperationsUIProps> = ({setSearchQuery, setC
             <button
               className="flex items-center space-x-2 px-4 py-2 border border-gray-300 dark:border-gray-700 text-gray-800 dark:text-gray-200 
               rounded-lg bg-transparent hover:bg-gray-100 dark:hover:bg-gray-800"
-              onClick={() => setShowCreateTaskPopup(true)}
+              onClick={() => setShowCreateProjectPopup(true)}
             >
-              <FaPlus /> <span className='hidden lg:block'>Create Task</span>
+              <FaPlus /> <span className='hidden lg:block'>Create Project</span>
             </button>
   
             <div
@@ -63,4 +64,4 @@ const TaskOperationsUI: React.FC<TaskOperationsUIProps> = ({setSearchQuery, setC
     );
 }
 
-export default TaskOperationsUI;
+export default ProjectOperationsUI;

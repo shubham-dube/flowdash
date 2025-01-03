@@ -1,30 +1,48 @@
 import { IUser } from '@/types/models';
 import Image from 'next/image';
+import Cookies from 'js-cookie';
+import jwt from 'jsonwebtoken';
 import React from 'react';
 import { FaBan, FaCheckCircle, FaCircle, FaExclamationCircle, FaExclamationTriangle, FaEye, FaSpinner, FaTasks } from 'react-icons/fa';
 
-export const AvatarWithName: React.FC<{ user: IUser }> = ({ user }) => {
-    return (
-        <div className="inline-flex items-center pr-2 space-x-2 bg-gray-100 dark:bg-gray-800 rounded-full shadow-md">
-            <div className="relative">
-                <Image
-                    src={user.photoUrl}
-                    alt={user.displayName}
-                    className="rounded-full border-2 border-blue-500"
-                    width={25}
-                    height={25}
-                />
-                {user.isActive && (
-                    <span className="absolute bottom-5 left-4 w-2 h-2 bg-green-500 border-2 border-white rounded-full"></span>
-                )}
-            </div>
-            <div className="flex flex-col">
-                <span className="text-sm text-gray-900 dark:text-white">
-                    {user.displayName}
-                </span>
-            </div>
+export const AvatarWithName: React.FC<{ user: IUser, wantName?: boolean }> = ({ user, wantName = true }) => {
+
+    const token: string = Cookies.get('jwtToken') as string;
+    const jwtPayload: JWTPayload = jwt.decode(token) as JWTPayload;
+
+    return wantName ? (<div className={`inline-flex items-center pr-2 space-x-2 ${wantName ? "" : "bg-gray-100 dark:bg-gray-800"} rounded-full shadow-md`}>
+        <div className="relative">
+            <Image
+                src={user.photoUrl}
+                alt={user.displayName}
+                className="rounded-full border-2 border-blue-500"
+                width={25}
+                height={25}
+            />
+            {user.isActive && (
+                <span className="absolute bottom-5 left-4 w-2 h-2 bg-green-500 border-2 border-white rounded-full"></span>
+            )}
         </div>
-    );
+        <div className="flex flex-col">
+            <span className="text-sm text-gray-900 dark:text-white">
+                {jwtPayload._id == user._id ? 'You' : user.displayName}
+            </span>
+        </div>
+    </div>
+    ) : (
+        <div className="relative">
+            <Image
+                src={user.photoUrl}
+                alt={user.displayName}
+                className="rounded-full"
+                width={25}
+                height={25}
+            />
+            {user.isActive && (
+                <span className="absolute bottom-5 left-4 w-2 h-2 bg-green-500 border-2 border-white rounded-full"></span>
+            )}
+        </div>
+    )
 };
 
 

@@ -1,36 +1,23 @@
 import React, { useEffect, useState } from 'react';
-import { FaExclamationCircle, FaCheckCircle, FaProjectDiagram, FaUsers, FaClock, FaHistory, FaArrowRight, FaSearch, FaFilter, FaArrowLeft } from 'react-icons/fa';
+import { FaCheckCircle, FaUsers, FaClock, FaHistory, FaArrowRight, FaSearch, FaFilter, FaArrowLeft } from 'react-icons/fa';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import { debounce } from 'lodash';
 import Cookies from 'js-cookie';
-import { IProject, IUser } from '@/types/models';
-import { FilterUIProps } from '@/types/ui.props';
+import { IUser } from '@/types/models';
+import { ProjectFilterUIProps } from '@/types/ui.props';
 
-const FilterComponent: React.FC<FilterUIProps> = ({ priority, setPriority, status, setStatus, selectedProjects, setSelectedProjects,
-  selectedUsers, setSelectedUsers, deadlineBefore, setDeadlineBefore, deadlineAfter, setDeadlineAfter, lastUpdatedBefore,
-  setLastUpdatedBefore, lastUpdatedAfter, setLastUpdatedAfter, setShowFilterPopup, applyFilters, resetFilters, isProjectFilter=true }) => {
+const ProjectFilterComponent: React.FC<ProjectFilterUIProps> = ({ status, setStatus, selectedUsers, setSelectedUsers, deadlineBefore,
+  setDeadlineBefore, deadlineAfter, setDeadlineAfter, lastUpdatedBefore, setLastUpdatedBefore, lastUpdatedAfter, setLastUpdatedAfter,
+  setShowFilterPopup, applyFilters, resetFilters }) => {
 
-  const [projects, setProjects] = useState<IProject[]>([]);
   const [users, setUsers] = useState<IUser[]>([]);
 
   const [selectedFilterNumber, setSelectedFilterNumber] = useState<number>(0);
 
-  const filtersUI = ["priority", "status", "projects", "createdBy", "deadline", "lastUpdated"];
+  const filtersUI = ["status", "createdBy", "deadline", "lastUpdated"];
 
   const token = Cookies.get('jwtToken');
-
-  const searchProjects = debounce(async (query: string) => {
-    try {
-      const response = await fetch(`/api/project?${query ? `search=${query}` : ""}&limit=10`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      const data = await response.json();
-      setProjects(data.projects);
-    } catch (error) {
-      console.error("Error searching users:", error);
-    }
-  }, 300);
 
   const searchUsers = debounce(async (query: string) => {
     try {
@@ -46,39 +33,12 @@ const FilterComponent: React.FC<FilterUIProps> = ({ priority, setPriority, statu
 
   const renderFilterOptions = () => {
     switch (filtersUI[selectedFilterNumber]) {
-      case 'priority':
-        return (
-          <div className="p-4">
-            <h3 className="text-lg mb-2">Priority</h3>
-            <div className="flex gap-2 flex-wrap">
-              {['Very-Low','Low', 'Medium', 'High', 'Very-High'].map((level) => (
-                <label key={level} className="flex items-center space-x-2">
-                  <input
-                    type="checkbox"
-                    value={level.toLowerCase()}
-                    checked={priority.includes(level.toLowerCase())}
-                    onChange={(e) => {
-                      const value = e.target.value;
-                      if (priority.includes(value)) {
-                        setPriority(priority.filter((item) => item !== value));
-                      } else {
-                        setPriority([...priority, value]);
-                      }
-                    }}
-                    className="form-checkbox"
-                  />
-                  <span>{level}</span>
-                </label>
-              ))}
-            </div>
-          </div>
-        );
       case 'status':
         return (
           <div className="p-4">
             <h3 className="text-lg mb-2">Status</h3>
             <div className="flex gap-2 flex-wrap">
-              {['To-Do', 'In-Progress', 'Completed', 'Blocked', 'In-Review'].map((level) => (
+              {['Active', 'Completed', 'Archived'].map((level) => (
                 <label key={level} className="flex items-center space-x-2">
                   <input
                     type="checkbox"
@@ -98,37 +58,7 @@ const FilterComponent: React.FC<FilterUIProps> = ({ priority, setPriority, statu
                 </label>
               ))}
             </div>
-            
-          </div>
-        );
-      case 'projects':
-        return (
-          <div className="p-4">
-            <h3 className="text-lg mb-2">Projects</h3>
-            <div className="flex-grow relative">
-              <FaSearch className="absolute left-3 top-3 text-gray-500 dark:text-gray-400" />
-              <input
-                onChange={(e) => searchProjects(e.target.value)}
-                type="text"
-                placeholder="Search Projects..."
-                className="w-full pl-10 pr-4 py-2 bg-transparent border border-gray-300 dark:border-gray-700 rounded-full text-gray-800 dark:text-gray-200 focus:ring-2 focus:ring-blue-500 focus:outline-none"
-              />
-            </div>
-            <select
-              title='projects'
-              name='projects'
-              multiple
-              className="w-full p-2 border border-gray-300 rounded bg-transparent dark:border-gray-700 rounded mt-3 dark:text-gray-200 h-36"
-              value={selectedProjects}
-              onChange={(e) =>
-                setSelectedProjects([...e.target.selectedOptions].map((option) => option.value))
-              }
-            >
-              {projects.map((project) => (
-                <option key={project._id} value={project._id}>{project.title}</option>
-              ))}
-            </select>
-            
+
           </div>
         );
       case 'createdBy':
@@ -159,7 +89,7 @@ const FilterComponent: React.FC<FilterUIProps> = ({ priority, setPriority, statu
                 <option key={user._id} value={user._id}>{user.displayName}</option>
               ))}
             </select>
-            
+
           </div>
         );
       case 'deadline':
@@ -186,9 +116,6 @@ const FilterComponent: React.FC<FilterUIProps> = ({ priority, setPriority, statu
                 />
               </div>
             </div>
-
-            
-
           </div>
         );
       case 'lastUpdated':
@@ -223,9 +150,8 @@ const FilterComponent: React.FC<FilterUIProps> = ({ priority, setPriority, statu
   };
 
   useEffect(() => {
-    searchProjects("");
     searchUsers("");
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (
@@ -245,12 +171,13 @@ const FilterComponent: React.FC<FilterUIProps> = ({ priority, setPriority, statu
 
         <div className="flex space-x-4 mt-4 border-t border-gray-300 dark:border-gray-700 pt-4">
           <div className="hidden lg:flex lg:flex-col md:flex md:flex-col space-y-4 w-1/3 border-r border-gray-300 dark:border-gray-700 pr-4">
+
             <button
               onClick={() => setSelectedFilterNumber(0)}
               className="flex items-center justify-between space-x-2 border border-gray-300 dark:border-gray-700 p-2 rounded"
             >
               <div className="flex items-center space-x-2">
-                <FaExclamationCircle className="text-blue-500 dark:text-blue-400" /> <span className="text-sm">Priority</span>
+                <FaCheckCircle className="text-green-500 dark:text-green-400" /> <span className="text-sm">Status</span>
               </div>
               <FaArrowRight className="text-sm text-gray-500 dark:text-gray-400" />
             </button>
@@ -260,34 +187,13 @@ const FilterComponent: React.FC<FilterUIProps> = ({ priority, setPriority, statu
               className="flex items-center justify-between space-x-2 border border-gray-300 dark:border-gray-700 p-2 rounded"
             >
               <div className="flex items-center space-x-2">
-                <FaCheckCircle className="text-green-500 dark:text-green-400" /> <span className="text-sm">Status</span>
-              </div>
-              <FaArrowRight className="text-sm text-gray-500 dark:text-gray-400" />
-            </button>
-
-            {isProjectFilter && (
-            <button
-              onClick={() => setSelectedFilterNumber(2)}
-              className="flex items-center justify-between space-x-2 border border-gray-300 dark:border-gray-700 p-2 rounded"
-            >
-              <div className="flex items-center space-x-2">
-                <FaProjectDiagram className="text-purple-500 dark:text-purple-400" /> <span className="text-sm">Projects</span>
-              </div>
-              <FaArrowRight className="text-sm text-gray-500 dark:text-gray-400" />
-            </button>)}
-
-            <button
-              onClick={() => setSelectedFilterNumber(3)}
-              className="flex items-center justify-between space-x-2 border border-gray-300 dark:border-gray-700 p-2 rounded"
-            >
-              <div className="flex items-center space-x-2">
                 <FaUsers className="text-blue-500 dark:text-blue-400" /> <span className="text-sm">Created By</span>
               </div>
               <FaArrowRight className="text-sm text-gray-500 dark:text-gray-400" />
             </button>
 
             <button
-              onClick={() => setSelectedFilterNumber(4)}
+              onClick={() => setSelectedFilterNumber(2)}
               className="flex items-center justify-between space-x-2 border border-gray-300 dark:border-gray-700 p-2 rounded"
             >
               <div className="flex items-center space-x-2">
@@ -297,7 +203,7 @@ const FilterComponent: React.FC<FilterUIProps> = ({ priority, setPriority, statu
             </button>
 
             <button
-              onClick={() => setSelectedFilterNumber(5)}
+              onClick={() => setSelectedFilterNumber(3)}
               className="flex items-center justify-between space-x-2 border border-gray-300 dark:border-gray-700 p-2 rounded"
             >
               <div className="flex items-center space-x-2">
@@ -314,10 +220,10 @@ const FilterComponent: React.FC<FilterUIProps> = ({ priority, setPriority, statu
 
 
         <div className='flex md:hidden justify-around border-t border-gray-300 dark:border-gray-700 pt-3'>
-          <button onClick={()=> setSelectedFilterNumber((selectedFilterNumber>0)?selectedFilterNumber-1:5)}>
+          <button onClick={() => setSelectedFilterNumber((selectedFilterNumber > 0) ? selectedFilterNumber - 1 : 5)}>
             <FaArrowLeft className="text-sm text-gray-500 dark:text-gray-400" />
           </button>
-          <button onClick={()=>setSelectedFilterNumber(selectedFilterNumber<5?selectedFilterNumber + 1:0)}>
+          <button onClick={() => setSelectedFilterNumber(selectedFilterNumber < 5 ? selectedFilterNumber + 1 : 0)}>
             <FaArrowRight className="text-sm text-gray-500 dark:text-gray-400" />
           </button>
         </div>
@@ -332,4 +238,4 @@ const FilterComponent: React.FC<FilterUIProps> = ({ priority, setPriority, statu
   );
 };
 
-export default FilterComponent;
+export default ProjectFilterComponent;

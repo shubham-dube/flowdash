@@ -14,6 +14,24 @@
   }
 }
 
+:root {
+  --gantt-text-color: #000000; 
+}
+
+.dark {
+  --gantt-text-color: #ffffff; 
+}
+
+
+.hide-scrollbar {
+  overflow-x: auto; 
+  scrollbar-width: none; 
+}
+
+.hide-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
 body {
   color: var(--foreground);
   background: var(--background);

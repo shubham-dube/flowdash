@@ -2,6 +2,9 @@ import { useEffect, useState } from 'react';
 import { FaCheckCircle, FaClock, FaEllipsisV, FaExclamationCircle, FaFlag, FaProjectDiagram, FaSortNumericDown, FaUser } from 'react-icons/fa';
 import TaskDetailsUIComponent from './Popups/taskDetailsUI';
 import useDeviceSize from '../common/deviceUtils';
+import { AvatarWithName } from './Popups/statusAndPriorityVisual';
+import { DateTimeFormatOptions, TaskListAndGridProps } from '@/types/ui.props';
+import Cookies from 'js-cookie';
 
 const TaskListAndGrid: React.FC<TaskListAndGridProps> = ({ tasks, isCardView, limit, setLimit,
     currentPage, setCurrentPage, totalTasks, fetchTasks, setIsCardView }) => {
@@ -9,6 +12,38 @@ const TaskListAndGrid: React.FC<TaskListAndGridProps> = ({ tasks, isCardView, li
     const [menuOpen, setMenuOpen] = useState("");
     const [TaskDetailsPopup, setShowTaskDetailsPopup] = useState(false);
     const { width } = useDeviceSize();
+
+    const showConfirmationAlert = async (id: string) => {
+        const confirm = window.confirm('Are you sure you want to delete this task?');
+        if (confirm) {
+            await deleteTask(id);
+            fetchTasks();
+        }
+    }
+
+    const token = Cookies.get('jwtToken');
+
+    const deleteTask = async (id: string) => {
+        try {
+          const response = await fetch(`/api/task`, {
+            method: 'DELETE',
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': `Bearer ${token}`,
+            },
+            body: JSON.stringify({ id })
+          });
+          const data = await response.json();
+          if(data.isError) {
+            throw new Error(data.message);
+          } else {
+            console.log('Task deleted successfully:', data);
+            window.alert('Task deleted successfully');
+          }
+        } catch (error) {
+          console.error('Error fetching tasks:', error);
+        }
+      };
 
     const toggleTaskMenu = (id: string) => {
         if (menuOpen === id) {
@@ -107,7 +142,7 @@ const TaskListAndGrid: React.FC<TaskListAndGridProps> = ({ tasks, isCardView, li
                                             <div className="absolute right-0 w-40 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-md">
                                                 <button className="w-full text-left px-3 py-1 text-sm hover:bg-gray-100 dark:hover:bg-gray-700" onClick={() => setShowTaskDetailsPopup(true)}>Details</button>
                                                 {/* <button className="w-full text-left px-3 py-1 text-sm hover:bg-gray-100 dark:hover:bg-gray-700">Mark as Completed</button> */}
-                                                {/* <button className="w-full text-left px-3 py-1 text-sm hover:bg-gray-100 dark:hover:bg-gray-700 text-red-500">Delete</button> */}
+                                                <button className="w-full text-left px-3 py-1 text-sm hover:bg-gray-100 dark:hover:bg-gray-700 text-red-500" onClick={() => showConfirmationAlert(task._id)}>Delete</button>
                                             </div>
                                         )}
                                     </div>
@@ -154,7 +189,7 @@ const TaskListAndGrid: React.FC<TaskListAndGridProps> = ({ tasks, isCardView, li
                                 <hr className="my-2 border-gray-300 dark:border-gray-700" />
                                 <div className="flex justify-between items-center text-xs text-gray-500 dark:text-gray-400">
                                     <div className='flex items-center'>
-                                        <FaUser className="mr-2 text-gray-500 dark:text-gray-400" /> {task.assignedBy.displayName}
+                                    <AvatarWithName user={task.assignedBy}/>
                                     </div>
                                     <span className='flex items-center'><FaClock className="mr-2 text-gray-500 dark:text-gray-400" />{formatDateString(task.lastUpdated)}</span>
                                 </div>
@@ -195,7 +230,7 @@ const TaskListAndGrid: React.FC<TaskListAndGridProps> = ({ tasks, isCardView, li
                                     }`} > {task.status.charAt(0).toUpperCase() + task.status.slice(1)} </span></span>
 
                                 <span className="w-2/12">{task.projectId.title}</span>
-                                <span className="w-2/12">{task.assignedBy.displayName}</span>
+                                <span className="w-2/12"> <AvatarWithName user={task.assignedBy}/></span>
                                 <span className="w-3/12 flex justify-between">{formatDateString(task.lastUpdated)}
                                     <div className="relative">
                                         <button
@@ -208,8 +243,8 @@ const TaskListAndGrid: React.FC<TaskListAndGridProps> = ({ tasks, isCardView, li
                                                 <button className="w-full text-left px-3 py-1 text-sm hover:bg-gray-100 dark:hover:bg-gray-700"
                                                     onClick={() => setShowTaskDetailsPopup(true)}>
                                                     Details</button>
-                                                <button className="w-full text-left px-3 py-1 text-sm hover:bg-gray-100 dark:hover:bg-gray-700">Mark as Completed</button>
-                                                <button className="w-full text-left px-3 py-1 text-sm hover:bg-gray-100 dark:hover:bg-gray-700 text-red-500">Delete</button>
+                                                {/* <button className="w-full text-left px-3 py-1 text-sm hover:bg-gray-100 dark:hover:bg-gray-700">Mark as Completed</button> */}
+                                                <button className="w-full text-left px-3 py-1 text-sm hover:bg-gray-100 dark:hover:bg-gray-700 text-red-500" onClick={() => showConfirmationAlert(task._id)}>Delete</button>
                                             </div>
                                         )}
                                     </div>

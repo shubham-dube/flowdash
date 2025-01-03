@@ -29,9 +29,13 @@ export const getProject = async (query: FilterQuery<IProject>) => {
     }
 };
 
-export const getProjectsByQuery = async (query: FilterQuery<IProject>, limit: number = 50, skip: number = 0) => {
+export const getProjectsByQuery = async (query: FilterQuery<IProject>, wantCount: boolean, limit: number = 50, skip: number = 0) => {
     try {
-        const projects = await ProjectModel.find(query).limit(limit).skip(skip);
+        if(wantCount){
+            const count = await ProjectModel.countDocuments(query);
+            return { message: 'Projects count retrieved successfully', isError: false, count: count };
+        }
+        const projects = await ProjectModel.find(query).limit(limit).skip(skip).sort({ lastUpdated: -1 }).populate('createdBy teamMembers tasks');
         return { message: 'Projects retrieved successfully', isError: false, projects: projects };
     } catch (error: any) {
         console.error('Error fetching projects by query:', error);

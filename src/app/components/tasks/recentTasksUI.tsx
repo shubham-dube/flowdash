@@ -2,6 +2,7 @@ import { ITask } from '@/types/models';
 import { useEffect, useState } from 'react';
 import Cookies from 'js-cookie';
 import {  FaClock, FaExclamationCircle, FaFlag, FaProjectDiagram, } from 'react-icons/fa';
+import { DateTimeFormatOptions } from '@/types/ui.props';
 
 
 const RecentTasksUI: React.FC<{ tasks: ITask[] }> = ({ tasks }) => {
@@ -52,8 +53,8 @@ const RecentTasksUI: React.FC<{ tasks: ITask[] }> = ({ tasks }) => {
         <div>
           <div className="flex justify-between items-center px-4 py-2 bg-gray-200 dark:bg-gray-700 text-sm font-medium">
             <span className="lg:w-3/12 md:w-3/12 w-5/12 flex items-center"><FaFlag className="mr-2" />Title</span>
-            <span className="w-2/12 flex items-center lg:block hidden"><FaExclamationCircle className="mr-2" />Priority</span>
-            <span className="w-4/12 flex items-center lg:block md:block hidden"><FaProjectDiagram className="mr-2" />Project</span>
+            <span className="w-2/12 flex items-center lg:flex hidden"><FaExclamationCircle className="mr-2" />Priority</span>
+            <span className="w-4/12 flex items-center lg:flex md:flex hidden"><FaProjectDiagram className="mr-2" />Project</span>
             <span className="lg:w-3/12 w-5/12 flex items-center"><FaClock className="mr-2" />Completed On</span>
           </div>
           {completedTasks.map((task) => (

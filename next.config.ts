@@ -39,6 +39,8 @@ module.exports = {
       { source: '/dashboard', destination: '/protected/dashboard' },
       { source: '/profile', destination: '/protected/profile' },
       { source: '/tasks', destination: '/protected/tasks' },
+      { source: '/projects', destination: '/protected/projects' },
+      { source: '/projects/:id', destination: '/protected/projects/:id' },
     ];
   },
 };

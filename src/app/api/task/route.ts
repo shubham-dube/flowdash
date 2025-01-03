@@ -94,7 +94,7 @@ export async function GET(request: Request) {
     const limit = searchParams.has('limit') ? parseInt(searchParams.get('limit')!) : 10;
     const skip = searchParams.has('skip') ? parseInt(searchParams.get('skip')!) : 0;
 
-    const result = await getTasksByQuery(dbQuery, limit, skip);
+    const result = await getTasksByQuery(dbQuery,false, limit, skip);
     const statusCode = result.isError ? 500 : 200;
 
     return NextResponse.json(result, { status: statusCode } );

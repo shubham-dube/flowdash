@@ -5,6 +5,7 @@ import 'react-datepicker/dist/react-datepicker.css';
 import Cookies from 'js-cookie';
 import { ITask } from '@/types/models';
 import { AvatarWithName, PriorityIndicator, StatusIndicator } from './statusAndPriorityVisual';
+import { DateTimeFormatOptions } from '@/types/ui.props';
 
 interface Props {
     task: ITask;

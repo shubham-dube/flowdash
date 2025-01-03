@@ -32,8 +32,12 @@ export const getTask = async (query: FilterQuery<ITask>) => {
     }
 };
 
-export const getTasksByQuery = async (query: FilterQuery<ITask>, limit: number = 50, skip: number = 0) => {
+export const getTasksByQuery = async (query: FilterQuery<ITask>, onlyCount:boolean,  limit: number = 50, skip: number = 0) => {
     try {
+        if(onlyCount){
+            const totalCount = await TaskModel.countDocuments(query);
+            return { message: 'Tasks Count retrieved successfully',count: totalCount, isError: false, tasks: null };
+        }
         const totalCount = await TaskModel.countDocuments(query);
         const tasks = await TaskModel.find(query).limit(limit).skip(skip).sort({ lastUpdated: -1 }).populate('projectId assignedTo assignedBy reviewedBy');
         const totalPages = Math.ceil(totalCount / limit);

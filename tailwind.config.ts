@@ -8,9 +8,16 @@ export default {
   ],
   theme: {
     extend: {
+      fontSize: {
+        'xxs': '0.625rem',
+        'xxxs': '0.312rem',
+      },
       colors: {
         background: "var(--background)",
         foreground: "var(--foreground)",
+      },
+      backgroundImage: {
+        "grad-image": "url('/gradient_background.avif')",
       },
       fontFamily: {
         'great-vibes': ['Great Vibes', 'cursive'],

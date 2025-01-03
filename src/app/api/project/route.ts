@@ -41,10 +41,23 @@ export async function GET(request: Request) {
 
     // Filters
     if (searchParams.has('createdBy')) {
-        dbQuery.createdBy = searchParams.get('createdBy');
+        const createdByValues = searchParams.get('createdBy');
+        if (createdByValues) {
+            dbQuery.createdBy = { $in: createdByValues.split(',') }; 
+        }
+    }
+
+    if (searchParams.has('teamMember')) {
+        const membersValues = searchParams.get('teamMember');
+        if (membersValues) {
+            dbQuery.teamMembers = { $in: membersValues.split(',') }; 
+        }
     }
     if (searchParams.has('status')) {
-        dbQuery.status = searchParams.get('status');
+        const statusValues = searchParams.get('status');
+        if (statusValues) {
+            dbQuery.status = { $in: statusValues.split(',') }; 
+        }
     }
     if (searchParams.has('deadlineBefore')) {
         dbQuery.deadline = { $lte: new Date(searchParams.get('deadlineBefore')!) };
@@ -62,7 +75,7 @@ export async function GET(request: Request) {
     const limit = searchParams.has('limit') ? parseInt(searchParams.get('limit')!) : 10;
     const skip = searchParams.has('skip') ? parseInt(searchParams.get('skip')!) : 0;
 
-    const result = await getProjectsByQuery(dbQuery, limit, skip);
+    const result = await getProjectsByQuery(dbQuery, false, limit, skip);
     const statusCode = result.isError ? 500 : 200;
 
     return NextResponse.json(result, { status: statusCode });
