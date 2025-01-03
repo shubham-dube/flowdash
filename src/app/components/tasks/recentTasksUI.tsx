@@ -3,16 +3,17 @@ import { useEffect, useState } from 'react';
 import Cookies from 'js-cookie';
 import {  FaClock, FaExclamationCircle, FaFlag, FaProjectDiagram, } from 'react-icons/fa';
 import { DateTimeFormatOptions } from '@/types/ui.props';
-
+import jwt from 'jsonwebtoken';
 
 const RecentTasksUI: React.FC<{ tasks: ITask[] }> = ({ tasks }) => {
   const [completedTasks, setCompletedTasks] = useState<ITask[]>([]);
 
-  const token = Cookies.get('jwtToken');
+  const token: string = Cookies.get('jwtToken') as string;
+  const jwtPayload: JWTPayload = jwt.decode(token) as JWTPayload;
 
   const fetchCompletedTasks = async () => {
     try {
-      const response = await fetch(`/api/task?status=completed&limit=${3}`, {
+      const response = await fetch(`/api/task?status=completed&limit=${3}&assignedTo=${jwtPayload._id}`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',

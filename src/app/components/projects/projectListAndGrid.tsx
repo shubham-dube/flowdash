@@ -7,7 +7,7 @@ import { ITask } from '@/types/models';
 import { useRouter } from 'next/navigation';
 
 const ProjectListAndGrid: React.FC<ProjectListAndGridProps> = ({ projects, isCardView, limit, setLimit,
-    currentPage, setCurrentPage, totalProjects, setIsCardView }) => {
+    currentPage, setCurrentPage, totalProjects, setIsCardView, wantMetaOptions = true }) => {
     const router = useRouter();
 
     const [menuOpen, setMenuOpen] = useState("");
@@ -68,28 +68,31 @@ const ProjectListAndGrid: React.FC<ProjectListAndGridProps> = ({ projects, isCar
         <div className="flex items-center space-x-2 mt-4 w-full">
             <div className="bg-white dark:bg-gray-800 border w-[100%] border-gray-200 dark:border-gray-700 rounded-lg p-4">
 
-                <div className="mb-4 float">
-                    <label className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                        Projects per page:
-                    </label>
-                    <select
-                        name='limits'
-                        title='limits'
-                        className="p-1 rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 
+                {wantMetaOptions && (
+                    <div className="mb-4 float">
+                        <label className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                            Projects per page:
+                        </label>
+                        <select
+                            name='limits'
+                            title='limits'
+                            className="p-1 rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 
                         dark:text-gray-300 shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm transition duration-150 ease-in-out"
-                        value={limit}
-                        onChange={(e) => setLimit(parseInt(e.target.value, 10))}
-                    >
-                        {[5, 10, 20, 50].map((value) => (
-                            <option key={value} value={value}>
-                                {value}
-                            </option>
-                        ))}
-                    </select>
-                </div>
+                            value={limit}
+                            onChange={(e) => setLimit(parseInt(e.target.value, 10))}
+                        >
+                            {[5, 10, 20, 50].map((value) => (
+                                <option key={value} value={value}>
+                                    {value}
+                                </option>
+                            ))}
+                        </select>
+                    </div>
+                )}
+
 
                 {isCardView ? (
-                    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                    <div className={`grid grid-cols-1 sticky ${wantMetaOptions? "sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3": ""} gap-4`}>
                         {projects.map((project) => {
                             const completedTasksCount = getCompletedTasksCount(project.tasks);
                             const inProgressTasksCount = getInProgressTasksCount(project.tasks);
@@ -125,8 +128,8 @@ const ProjectListAndGrid: React.FC<ProjectListAndGridProps> = ({ projects, isCar
                                             </button>
                                             {menuOpen === project._id && (
                                                 <div className="absolute right-0 w-40 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-md">
-                                                    <button className="w-full text-left px-3 py-1 text-sm hover:bg-gray-100 dark:hover:bg-gray-700" 
-                                                    onClick={() => { router.push(`projects/${project._id}`)}}>Details</button>
+                                                    <button className="w-full text-left px-3 py-1 text-sm hover:bg-gray-100 dark:hover:bg-gray-700"
+                                                        onClick={() => { router.push(`projects/${project._id}`) }}>Details</button>
                                                     {/* <button className="w-full text-left px-3 py-1 text-sm hover:bg-gray-100 dark:hover:bg-gray-700">Mark as Completed</button> */}
                                                     {/* <button className="w-full text-left px-3 py-1 text-sm hover:bg-gray-100 dark:hover:bg-gray-700 text-red-500">Delete</button> */}
                                                 </div>
@@ -211,7 +214,7 @@ const ProjectListAndGrid: React.FC<ProjectListAndGridProps> = ({ projects, isCar
                                 >
                                     <span className="w-1/12">{index + 1}</span>
                                     <span className="w-2/12">{project.title}</span>
-    
+
                                     <span className="w-1/12"><span className={`ml-2 inline-block px-2 py-1 text-xs font-semibold rounded-full ${project.status === 'completed'
                                         ? 'border border-green-500 text-green-500'
                                         : project.status === 'active'
@@ -220,9 +223,9 @@ const ProjectListAndGrid: React.FC<ProjectListAndGridProps> = ({ projects, isCar
                                                 ? 'border border-yellow-500 text-yellow-500'
                                                 : 'border border-gray-500 text-gray-500'
                                         }`} > {project.status.charAt(0).toUpperCase() + project.status.slice(1)} </span></span>
-    
+
                                     <span className="w-3/12 px-5">
-                                    <div className="mt-2 flex flex-col space-y-2">
+                                        <div className="mt-2 flex flex-col space-y-2">
                                             <div className="flex justify-between items-center text-xs text-gray-500 dark:text-gray-200">
                                                 <span><span className="text-xl font-semibold">{completedTasksCount}</span> <span>/ {totalTasks} tasks</span></span>
                                                 <span className="text-xs">{Math.round(completedPercentage)}%</span>
@@ -241,8 +244,8 @@ const ProjectListAndGrid: React.FC<ProjectListAndGridProps> = ({ projects, isCar
                                     </span>
                                     <span className="w-2/12"> <AvatarWithName user={project.createdBy} /></span>
 
-                                    <span className="w-1/12"> 
-                                    <div className="flex items-center">
+                                    <span className="w-1/12">
+                                        <div className="flex items-center">
                                             {project.teamMembers.map((member, index) => (
                                                 <div
                                                     key={member.id}
@@ -265,7 +268,7 @@ const ProjectListAndGrid: React.FC<ProjectListAndGridProps> = ({ projects, isCar
                                             {menuOpen === project._id && (
                                                 <div className="absolute right-0 w-40 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-md">
                                                     <button className="w-full text-left px-3 py-1 text-sm hover:bg-gray-100 dark:hover:bg-gray-700"
-                                                        onClick={() => { router.push(`projects/${project._id}`)}}>
+                                                        onClick={() => { router.push(`projects/${project._id}`) }}>
                                                         Details</button>
                                                     {/* <button className="w-full text-left px-3 py-1 text-sm hover:bg-gray-100 dark:hover:bg-gray-700">Mark as Completed</button>
                                                     <button className="w-full text-left px-3 py-1 text-sm hover:bg-gray-100 dark:hover:bg-gray-700 text-red-500">Delete</button> */}
@@ -279,25 +282,28 @@ const ProjectListAndGrid: React.FC<ProjectListAndGridProps> = ({ projects, isCar
                     </div>
                 )}
 
-                <div className="flex justify-between items-center mt-4">
-                    <button
-                        className="px-4 py-2 bg-gray-100 dark:bg-gray-700 rounded hover:bg-gray-200 dark:hover:bg-gray-600"
-                        onClick={() => changePage(currentPage - 1)}
-                        disabled={currentPage === 1}
-                    >
-                        Previous
-                    </button>
-                    <span>
-                        Page {currentPage} of {totalPages}
-                    </span>
-                    <button
-                        className="px-4 py-2 bg-gray-100 dark:bg-gray-700 rounded hover:bg-gray-200 dark:hover:bg-gray-600"
-                        onClick={() => changePage(currentPage + 1)}
-                        disabled={currentPage === totalPages}
-                    >
-                        Next
-                    </button>
-                </div>
+                {wantMetaOptions && (
+                    <div className="flex justify-between items-center mt-4">
+                        <button
+                            className="px-4 py-2 bg-gray-100 dark:bg-gray-700 rounded hover:bg-gray-200 dark:hover:bg-gray-600"
+                            onClick={() => changePage(currentPage - 1)}
+                            disabled={currentPage === 1}
+                        >
+                            Previous
+                        </button>
+                        <span>
+                            Page {currentPage} of {totalPages}
+                        </span>
+                        <button
+                            className="px-4 py-2 bg-gray-100 dark:bg-gray-700 rounded hover:bg-gray-200 dark:hover:bg-gray-600"
+                            onClick={() => changePage(currentPage + 1)}
+                            disabled={currentPage === totalPages}
+                        >
+                            Next
+                        </button>
+                    </div>
+                )}
+
             </div>
         </div>
     </div>

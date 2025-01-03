@@ -8,6 +8,7 @@ import TaskListAndGrid from '@/app/components/tasks/tasksListAndGrid';
 import { ITask } from '@/types/models';
 import Cookies from 'js-cookie';
 import { useState, useEffect } from 'react';
+import jwt from 'jsonwebtoken';
 
 const TaskPage = () => {
   const [tasks, setTasks] = useState<ITask[]>([]);
@@ -73,12 +74,13 @@ const TaskPage = () => {
     setShowFilterPopup(false);
   }
 
-  const token = Cookies.get('jwtToken');
+  const token: string = Cookies.get('jwtToken') as string;
+  const jwtPayload: JWTPayload = jwt.decode(token) as JWTPayload;
 
   // Fetch tasks from API
   const fetchTasks = async () => {
     try {
-      const response = await fetch(`/api/task?search=${searchQuery}&${filter}&limit=${limit}&skip=${limit * (currentPage - 1)}`, {
+      const response = await fetch(`/api/task?assignedTo=${jwtPayload._id}&search=${searchQuery}&${filter}&limit=${limit}&skip=${limit * (currentPage - 1)}`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',

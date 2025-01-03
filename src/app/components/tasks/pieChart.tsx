@@ -4,13 +4,13 @@ import { PieChart, Pie, Cell, Legend, Tooltip, ResponsiveContainer } from "recha
 
 interface PieChartProps {
   tasks: ITask[];
+  title?: string;
 }
 
-const CustomPieChart: React.FC<PieChartProps> = ({ tasks }) => {
+const CustomPieChart: React.FC<PieChartProps> = ({ tasks, title="" }) => {
 
   const statuses = countTaskStatuses(tasks);
   
-
   const data = [
     { name: "To-Do", value: statuses["to-do"] },
     { name: "In-Review", value: statuses["in-review"] },
@@ -19,11 +19,11 @@ const CustomPieChart: React.FC<PieChartProps> = ({ tasks }) => {
     { name: "In-Progress", value: statuses['in-progress'] },
   ];
 
-  const COLORS = ["#FF6384", "#36A2EB", "#FFCE56", "#4CAF50", "#FF9800"];
+  const COLORS = ["#FFCE56", "#FF9800", "#4CAF50","#FF6384" , "#36A2EB"];
 
-  return (<div className="flex flex-col lg:w-2/6 mt-4 lg:mt-0">
+  return (<div className={`flex flex-col ${title==""?"lg:w-2/6":"w-full"}  mt-4 lg:mt-0`}>
     <div className="relative bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-4 h-full">
-      <h2 className="absolute text-sm text-center">TASKS CHART</h2>
+      <h2 className="absolute text-sm text-center">{title==""?"TASKS CHART":title} </h2>
       <div className="w-full h-64">
       <ResponsiveContainer>
         <PieChart>
@@ -35,8 +35,7 @@ const CustomPieChart: React.FC<PieChartProps> = ({ tasks }) => {
             cy="50%"
             outerRadius={80}
             fill="#8884d8"
-            label
-          >
+            label>
             {data.map((entry, index) => (
               <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
             ))}

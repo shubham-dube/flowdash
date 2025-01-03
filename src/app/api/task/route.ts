@@ -78,17 +78,18 @@ export async function GET(request: Request) {
             dbQuery.priority = { $in: priorityValues.split(',') };
         }
     }
-    if (searchParams.has('deadlineBefore')) {
-        dbQuery.deadline = { $lte: new Date(searchParams.get('deadlineBefore')!) };
-    }
     if (searchParams.has('deadlineAfter')) {
-        dbQuery.deadline = { ...(dbQuery.deadline || {}), $gte: new Date(searchParams.get('deadlineAfter')!) };
+        dbQuery.deadline = { $gte: new Date(searchParams.get('deadlineAfter')!) };
+    }
+    if (searchParams.has('deadlineBefore')) {
+        dbQuery.deadline = { ...(dbQuery.deadline || {}), $lte: new Date(searchParams.get('deadlineBefore')!) };
+    }
+
+    if (searchParams.has('lastUpdatedAfter')) {
+        dbQuery.lastUpdated = { $gte: new Date(searchParams.get('lastUpdatedAfter')!) };
     }
     if (searchParams.has('lastUpdatedBefore')) {
-        dbQuery.lastUpdated = { $lte: new Date(searchParams.get('lastUpdatedBefore')!) };
-    }
-    if (searchParams.has('lastUpdatedAfter')) {
-        dbQuery.lastUpdated = { ...(dbQuery.lastUpdated || {}), $gte: new Date(searchParams.get('lastUpdatedAfter')!) };
+        dbQuery.lastUpdated = { ...(dbQuery.lastUpdated || {}), $lte: new Date(searchParams.get('lastUpdatedBefore')!) };
     }
 
     const limit = searchParams.has('limit') ? parseInt(searchParams.get('limit')!) : 10;

@@ -93,6 +93,7 @@ interface ProjectListAndGridProps {
     totalProjects: number;
     fetchProjects: () => void;
     setIsCardView: (isCardView: boolean) => void;
+    wantMetaOptions?: boolean;
 }
 
 interface MembersListAndGridProps {
