@@ -1,8 +1,13 @@
 import { ProjectOperationsUIProps } from '@/types/ui.props';
 import { FaFilter, FaList, FaPlus, FaSearch, FaTh} from 'react-icons/fa';
+import OperationSkeleton from '../tasks/skeletons/operationsSkeleton';
 
 const ProjectOperationsUI: React.FC<ProjectOperationsUIProps> = ({setSearchQuery, setCurrentPage, setShowFilterPopup, 
-    setShowCreateProjectPopup, setIsCardView, isCardView}) => {
+    setShowCreateProjectPopup, setIsCardView, isCardView, loading=false}) => {
+
+      if(loading){
+        return <OperationSkeleton/>
+      }
       
     return (
         <div className="flex flex-col w-full mt-4 p-4 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-md">

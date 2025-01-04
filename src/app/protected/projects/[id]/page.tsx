@@ -5,12 +5,14 @@ import { IProject, ITask, IUser } from '@/types/models';
 import { useEffect, useState } from 'react';
 import HeaderMetaData from '@/app/components/projects/detailPage/header';
 import SemiCircleChart from '@/app/components/projects/detailPage/overview/taskMeter';
-import {  FaFileAlt } from 'react-icons/fa';
+import { FaFileAlt } from 'react-icons/fa';
 import ProjectMetaData from '@/app/components/projects/detailPage/overview/metaData';
 import ProjectTasksTabUI from '@/app/components/projects/detailPage/tasks/projectTasks';
 import GanttChart from '@/app/components/projects/detailPage/timeline/ganttChart';
 import { Task } from 'gantt-task-react';
 import ProjectMemberTabUI from '@/app/components/projects/detailPage/members/memberTab';
+import HeaderSkeleton from '@/app/components/projects/detailPage/skeletons/headerSkeleton';
+import OverviewSkeleton from '@/app/components/projects/detailPage/skeletons/overviewSkeleton';
 
 
 const ProjectDetails = () => {
@@ -18,26 +20,27 @@ const ProjectDetails = () => {
     const id = path.split('/').pop();
     const [project, setProject] = useState<IProject | null>(null);
     const [activeTab, setActiveTab] = useState('Overview');
+    const [loading, setLoading] = useState<boolean>(false);
 
     const convertITaskToTask = (iTask: ITask): Task => {
         return {
-          id: iTask._id.toString(),
-          type: "task",
-          name: iTask.title,
-          start: new Date(iTask.createdAt),
-          end: iTask.deadline ? new Date(iTask.deadline) : new Date(),
-          progress: 100, 
+            id: iTask._id.toString(),
+            type: "task",
+            name: iTask.title,
+            start: new Date(iTask.createdAt),
+            end: iTask.deadline ? new Date(iTask.deadline) : new Date(),
+            progress: 100,
         };
-      };
+    };
 
     const renderContent = () => {
         switch (activeTab) {
             case 'Overview':
-                return (
+                return loading?<OverviewSkeleton/>:(
                     <div className="mt-4 space-y-4">
                         <div className='lg:flex w-full gap-4'>
                             <SemiCircleChart tasks={((project?.tasks) ? project.tasks as ITask[] : [])} />
-                            <ProjectMetaData project={project as IProject}/>
+                            <ProjectMetaData project={project as IProject} />
                         </div>
 
                         <div className='flex flex-col bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-4'>
@@ -58,26 +61,27 @@ const ProjectDetails = () => {
                 );
             case 'Tasks':
                 return (
-                    <ProjectTasksTabUI id={project?._id} members={project?.teamMembers as IUser[]}/>
+                    <ProjectTasksTabUI id={project?._id} members={project?.teamMembers as IUser[]} />
                 );
             case 'Notes':
                 return <div>Project Notes Content</div>;
             case 'Timeline':
                 const tasksGantt: Task[] = [];
                 const length: number = project?.tasks.length as number;
-                for(let i = 0; i <length ; i++) {
+                for (let i = 0; i < length; i++) {
                     const task = project?.tasks[i] as ITask;
                     tasksGantt.push(convertITaskToTask(task));
                 }
-                return <div className='mt-4'><GanttChart tasks={tasksGantt}/></div>;
+                return <div className='mt-4'><GanttChart tasks={tasksGantt} /></div>;
             case 'Members':
-                return <ProjectMemberTabUI id={id as string} teamMembers={project?.teamMembers as IUser[]} fetchProjects={fetchProject}/>
+                return <ProjectMemberTabUI id={id as string} teamMembers={project?.teamMembers as IUser[]} fetchProjects={fetchProject} />
             default:
                 return null;
         }
     };
 
     const fetchProject = async () => {
+        setLoading(true);
         const token: string = Cookies.get('jwtToken') as string;
 
         try {
@@ -92,12 +96,14 @@ const ProjectDetails = () => {
             );
             const data = await response.json();
             setProject(data.project)
+            setLoading(false);
             console.log(data);
         } catch (error) {
+            setLoading(false);
             console.error('Error fetching project:', error);
         }
     }
-    
+
 
     useEffect(() => {
         fetchProject();
@@ -106,14 +112,15 @@ const ProjectDetails = () => {
 
     return (
         <div className="p-4 text-gray-800 dark:text-gray-100">
-            <HeaderMetaData
-                projectTitle={project?.title as string}
-                createdBy={project?.createdBy.displayName}
-                createdDate={project?.createdAt as Date}
-                deadline={project?.deadline as Date}
-            />
+            {loading ? <HeaderSkeleton /> :
+                <HeaderMetaData
+                    projectTitle={project?.title as string}
+                    createdBy={project?.createdBy.displayName}
+                    createdDate={project?.createdAt as Date}
+                    deadline={project?.deadline as Date}
+                />}
 
-            <div className="flex gap-2 mt-2 overflow-x-auto hide-scrollbar">
+            {!loading?<div className="flex gap-2 mt-2 overflow-x-auto hide-scrollbar">
                 {['Overview', 'Tasks', 'Notes', 'Timeline', 'Members'].map((tab) => (
                     <button
                         key={tab}
@@ -123,7 +130,18 @@ const ProjectDetails = () => {
                         {tab}
                     </button>
                 ))}
-            </div>
+            </div>:
+            <div className="flex gap-2 mt-2 overflow-x-auto hide-scrollbar">
+                {Array(5)
+                    .fill(null)
+                    .map((_, index) => (
+                        <div
+                            key={index}
+                            className="flex-1 px-4 py-5 bg-gray-200 dark:bg-gray-700 rounded-lg animate-pulse"
+                        ></div>
+                    ))}
+            </div>}
+
 
             <div className="flex flex-col gap-2 mt-2">
                 {renderContent()}

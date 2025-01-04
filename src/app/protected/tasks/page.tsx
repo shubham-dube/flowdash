@@ -1,7 +1,6 @@
 'use client';
 import CreateTaskComponent from '@/app/components/tasks/Popups/createTaskPopupUI';
 import FilterComponent from '@/app/components/tasks/Popups/filtersPopupUI';
-import CustomPieChart from '@/app/components/tasks/pieChart';
 import RecentTasksUI from '@/app/components/tasks/recentTasksUI';
 import TaskOperationsUI from '@/app/components/tasks/taskOperationsUI';
 import TaskListAndGrid from '@/app/components/tasks/tasksListAndGrid';
@@ -9,6 +8,7 @@ import { ITask } from '@/types/models';
 import Cookies from 'js-cookie';
 import { useState, useEffect } from 'react';
 import jwt from 'jsonwebtoken';
+import TasksChartUI from '@/app/components/tasks/taskChart';
 
 const TaskPage = () => {
   const [tasks, setTasks] = useState<ITask[]>([]);
@@ -17,6 +17,7 @@ const TaskPage = () => {
   const [showFilterPopup, setShowFilterPopup] = useState<boolean>(false);
   const [showCreateTaskPopup, setShowCreateTaskPopup] = useState<boolean>(false);
   const [filter, setFilter] = useState<string>("");
+  const [loading, setLoading] = useState<boolean> (false);
 
   // Filter Component Props
   const [priority, setPriority] = useState<string[]>([]);
@@ -80,6 +81,7 @@ const TaskPage = () => {
   // Fetch tasks from API
   const fetchTasks = async () => {
     try {
+      setLoading(true);
       const response = await fetch(`/api/task?assignedTo=${jwtPayload._id}&search=${searchQuery}&${filter}&limit=${limit}&skip=${limit * (currentPage - 1)}`, {
         method: 'GET',
         headers: {
@@ -90,7 +92,9 @@ const TaskPage = () => {
       const data = await response.json();
       setTasks(data.tasks);
       setTotalTasks(data.totalCount);
+      setLoading(false);
     } catch (error) {
+      setLoading(false);
       console.error('Error fetching tasks:', error);
     }
   };
@@ -104,28 +108,28 @@ const TaskPage = () => {
     <main className="flex-1 text-gray-800 dark:text-gray-100 container mx-auto p-6 h-screen">
 
       <div className={`lg:flex justify-between`}>
-        <RecentTasksUI tasks={tasks}/>
-        <CustomPieChart tasks={tasks}/>
+        <RecentTasksUI tasks={tasks} />
+        <TasksChartUI/>
       </div>
 
       {/* Tasks Operation Section */}
       <TaskOperationsUI setSearchQuery={setSearchQuery} setCurrentPage={setCurrentPage}
-        setShowFilterPopup={setShowFilterPopup} setShowCreateTaskPopup={setShowCreateTaskPopup} setIsCardView={setIsCardView}
-        isCardView={isCardView} />
+      setShowFilterPopup={setShowFilterPopup} setShowCreateTaskPopup={setShowCreateTaskPopup} setIsCardView={setIsCardView}
+      isCardView={isCardView} />
 
 
       {/* Tasks Section */}
       <TaskListAndGrid tasks={tasks} isCardView={isCardView} limit={limit} setLimit={setLimit} currentPage={currentPage}
-        setCurrentPage={setCurrentPage} totalTasks={totalTasks} fetchTasks={fetchTasks} setIsCardView={setIsCardView}/>
+      setCurrentPage={setCurrentPage} totalTasks={totalTasks} fetchTasks={fetchTasks} setIsCardView={setIsCardView} loading={loading} />
 
 
       {/* Filter Popup */}
       {showFilterPopup && <FilterComponent priority={priority} setPriority={setPriority} status={status} setStatus={setStatus}
-          selectedProjects={selectedProjects} setSelectedProjects={setSelectedProjects} selectedUsers={selectedUsers}
-          setSelectedUsers={setSelectedUsers} deadlineBefore={deadlineBefore} setDeadlineBefore={setDeadlineBefore}
-          deadlineAfter={deadlineAfter} setDeadlineAfter={setDeadlineAfter} lastUpdatedBefore={lastUpdatedBefore}
-          setLastUpdatedBefore={setLastUpdatedBefore} lastUpdatedAfter={lastUpdatedAfter} setLastUpdatedAfter={setLastUpdatedAfter}
-          setShowFilterPopup={setShowFilterPopup} applyFilters={applyFilters} resetFilters={resetFilters} /> }
+        selectedProjects={selectedProjects} setSelectedProjects={setSelectedProjects} selectedUsers={selectedUsers}
+        setSelectedUsers={setSelectedUsers} deadlineBefore={deadlineBefore} setDeadlineBefore={setDeadlineBefore}
+        deadlineAfter={deadlineAfter} setDeadlineAfter={setDeadlineAfter} lastUpdatedBefore={lastUpdatedBefore}
+        setLastUpdatedBefore={setLastUpdatedBefore} lastUpdatedAfter={lastUpdatedAfter} setLastUpdatedAfter={setLastUpdatedAfter}
+        setShowFilterPopup={setShowFilterPopup} applyFilters={applyFilters} resetFilters={resetFilters} />}
 
       {/* Create Task Popup */}
       {showCreateTaskPopup && <CreateTaskComponent setShowCreateTaskPopup={setShowCreateTaskPopup} fetchTasks={fetchTasks} />}

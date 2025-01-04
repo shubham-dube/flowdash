@@ -62,16 +62,16 @@ const MyHeader = () => {
 
         {/* Buttons */}
         <div className="hidden md:flex space-x-4">
-          <Link href="/signin">
+          <a href="/signin">
             <button className="px-4 py-2 border rounded text-blue-600 border-blue-600 hover:bg-blue-600 hover:text-white">
               Sign In
-            </button>
-          </Link>
-          <Link href="/signup">
+            </button> 
+          </a>
+          <a href="/signup">
             <button className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">
               Sign Up
             </button>
-          </Link>
+          </a>
           <ThemeToggle/>
         </div>
 

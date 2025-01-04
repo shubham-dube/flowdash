@@ -69,6 +69,7 @@ interface TaskOperationsUIProps {
     setShowCreateTaskPopup: (showCreateTaskPopup: boolean) => void;
     setIsCardView: (isCardView: boolean) => void;
     isCardView: boolean;
+    loading?: boolean;
 }
 
 interface TaskListAndGridProps {
@@ -81,6 +82,7 @@ interface TaskListAndGridProps {
     totalTasks: number;
     fetchTasks: () => void;
     setIsCardView: (isCardView: boolean) => void;
+    loading: boolean;
 }
 
 interface ProjectListAndGridProps {
@@ -93,6 +95,7 @@ interface ProjectListAndGridProps {
     totalProjects: number;
     fetchProjects: () => void;
     setIsCardView: (isCardView: boolean) => void;
+    loading?:boolean;
     wantMetaOptions?: boolean;
 }
 
@@ -126,6 +129,7 @@ interface ProjectOperationsUIProps {
     setShowCreateProjectPopup: (setShowCreateProjectPopup: boolean) => void;
     setIsCardView: (isCardView: boolean) => void;
     isCardView: boolean;
+    loading?:boolean;
 }
 interface UserOperationsUIProps {
     setSearchQuery: (query: string) => void;

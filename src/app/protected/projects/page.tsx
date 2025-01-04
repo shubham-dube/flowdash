@@ -17,6 +17,7 @@ const ProjectsPage = () => {
   const [showFilterPopup, setShowFilterPopup] = useState<boolean>(false);
   const [showCreateProjectPopup, setShowCreateProjectPopup] = useState<boolean>(false);
   const [filter, setFilter] = useState<string>("");
+  const [loading, setLoading] = useState<boolean>(false);
 
   // Filter Component Props
   const [status, setStatus] = useState<string[]>([]);
@@ -69,6 +70,7 @@ const ProjectsPage = () => {
 
   // Fetch tasks from API
   const fetchProjects = async () => {
+    setLoading(true);
     try {
       const response = await fetch(`/api/project?search=${searchQuery}&${filter}&limit=${limit}&skip=${limit * (currentPage - 1)}&teamMember=${jwtPayload._id}`, {
         method: 'GET',
@@ -80,7 +82,9 @@ const ProjectsPage = () => {
       const data = await response.json();
       setProject(data.projects);
       setTotalTasks(data.projects.length);
+      setLoading(false);
     } catch (error) {
+      setLoading(false);
       console.error('Error fetching tasks:', error);
     }
   };
@@ -101,12 +105,12 @@ const ProjectsPage = () => {
       {/* Tasks Operation Section */}
       <ProjectOperationsUI setSearchQuery={setSearchQuery} setCurrentPage={setCurrentPage}
         setShowFilterPopup={setShowFilterPopup} setShowCreateProjectPopup={setShowCreateProjectPopup} setIsCardView={setIsCardView}
-        isCardView={isCardView} />
+        isCardView={isCardView}/>
 
 
       {/* Tasks Section */}
       <ProjectListAndGrid projects={projects} isCardView={isCardView} limit={limit} setLimit={setLimit} currentPage={currentPage}
-        setCurrentPage={setCurrentPage} totalProjects={totalTasks} fetchProjects={fetchProjects} setIsCardView={setIsCardView}/>
+        setCurrentPage={setCurrentPage} totalProjects={totalTasks} fetchProjects={fetchProjects} setIsCardView={setIsCardView} loading={loading}/>
 
 
       {/* Filter Popup */}

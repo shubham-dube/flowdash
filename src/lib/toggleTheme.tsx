@@ -6,12 +6,18 @@ import { FaMoon, FaSun } from "react-icons/fa";
 const ThemeToggle = () => {
   const { theme, setTheme } = useTheme();
 
+  const renderIcon = (theme:string)=>{
+    if(theme === 'dark'){
+      return <FaSun/>;
+    } else return <FaMoon className="text-gray-800"/>;
+  }
+
   return (
     <button
       onClick={() => setTheme(theme === 'light' ? 'dark' : 'light')}
       className="bg-transparent flex items-center justify-center"
     >
-      {theme === 'dark' ? <FaSun/> : <FaMoon className="text-gray-800"/>}
+      {theme && renderIcon(theme as string)}
     </button>
   );
 };

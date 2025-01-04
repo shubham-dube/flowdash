@@ -4,6 +4,7 @@ import { FiSettings, FiLogOut } from "react-icons/fi";
 import { FaTachometerAlt, FaTasks, FaProjectDiagram, FaBell } from "react-icons/fa";
 import Image from "next/image";
 import Link from "next/link";
+import { useAuth } from "@/context/AuthContext";
 
 interface SidebarProps {
   isMobileOpen: boolean;
@@ -13,6 +14,7 @@ interface SidebarProps {
 }
 
 const Sidebar: React.FC<SidebarProps> = ({ isMobileOpen, toggleMobileSidebar, selectedTab, changeTab }) => {
+  const { logout } = useAuth();
   
   const navItems = [
     { name: "Dashboard", icon: <FaTachometerAlt />, href: "/dashboard" },
@@ -20,6 +22,18 @@ const Sidebar: React.FC<SidebarProps> = ({ isMobileOpen, toggleMobileSidebar, se
     { name: "My Tasks", icon: <FaTasks />, href: "/tasks" },
     { name: "Notifications", icon: <FaBell />, href: "/profile" },
   ];
+
+  const handleLogout = async () => {
+    try {
+      const confirm = window.confirm('Are you sure you want to logout?');
+      if(confirm) {
+        await logout();
+        console.log("User logged out successfully");
+      }
+    } catch (error) {
+      console.error("Logout failed:", error);
+    }
+  };
 
   return (
     <>
@@ -108,13 +122,13 @@ const Sidebar: React.FC<SidebarProps> = ({ isMobileOpen, toggleMobileSidebar, se
             <span>Settings</span>
           </Link>
 
-          <Link
-            href="/logout"
+          <button
+             onClick={handleLogout}
             className="flex items-center gap-4 px-4 py-3 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-md"
           >
             <FiLogOut />
             <span>Logout</span>
-          </Link>
+          </button>
         </div>
       </>
     );

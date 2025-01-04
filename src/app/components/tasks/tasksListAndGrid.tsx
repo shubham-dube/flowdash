@@ -5,9 +5,11 @@ import useDeviceSize from '../common/deviceUtils';
 import { AvatarWithName } from './Popups/statusAndPriorityVisual';
 import { DateTimeFormatOptions, TaskListAndGridProps } from '@/types/ui.props';
 import Cookies from 'js-cookie';
+import DetailedTasksListSkeleton from './skeletons/taskListSkeleton';
+import ProjectsGridSkeleton from '../projects/skeletons/projectGrid';
 
 const TaskListAndGrid: React.FC<TaskListAndGridProps> = ({ tasks, isCardView, limit, setLimit,
-    currentPage, setCurrentPage, totalTasks, fetchTasks, setIsCardView }) => {
+    currentPage, setCurrentPage, totalTasks, fetchTasks, setIsCardView, loading }) => {
 
     const [menuOpen, setMenuOpen] = useState("");
     const [TaskDetailsPopup, setShowTaskDetailsPopup] = useState(false);
@@ -25,25 +27,25 @@ const TaskListAndGrid: React.FC<TaskListAndGridProps> = ({ tasks, isCardView, li
 
     const deleteTask = async (id: string) => {
         try {
-          const response = await fetch(`/api/task`, {
-            method: 'DELETE',
-            headers: {
-              'Content-Type': 'application/json',
-              'Authorization': `Bearer ${token}`,
-            },
-            body: JSON.stringify({ id })
-          });
-          const data = await response.json();
-          if(data.isError) {
-            throw new Error(data.message);
-          } else {
-            console.log('Task deleted successfully:', data);
-            window.alert('Task deleted successfully');
-          }
+            const response = await fetch(`/api/task`, {
+                method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`,
+                },
+                body: JSON.stringify({ id })
+            });
+            const data = await response.json();
+            if (data.isError) {
+                throw new Error(data.message);
+            } else {
+                console.log('Task deleted successfully:', data);
+                window.alert('Task deleted successfully');
+            }
         } catch (error) {
-          console.error('Error fetching tasks:', error);
+            console.error('Error fetching tasks:', error);
         }
-      };
+    };
 
     const toggleTaskMenu = (id: string) => {
         if (menuOpen === id) {
@@ -86,6 +88,10 @@ const TaskListAndGrid: React.FC<TaskListAndGridProps> = ({ tasks, isCardView, li
             console.log('Desktop view');
         }
     }, [isCardView, setIsCardView, width]);
+
+    if (loading && isCardView) {
+        return <ProjectsGridSkeleton wantMetaOptions={true} />
+    }
 
     return (<div className="tasks-section">
         <div className="flex items-center space-x-2 mt-4 w-full">
@@ -150,32 +156,32 @@ const TaskListAndGrid: React.FC<TaskListAndGridProps> = ({ tasks, isCardView, li
                                 <div className="mt-2">
                                     <span
                                         className={`inline-block px-2 py-1 text-xs font-semibold rounded-full ${task.priority === 'very-low'
-                                                ? 'border border-gray-400 text-gray-400'
-                                                : task.priority === 'low'
-                                                    ? 'border border-yellow-300 text-yellow-300'
-                                                    : task.priority === 'medium'
-                                                        ? 'border border-yellow-500 text-yellow-500'
-                                                        : task.priority === 'high'
-                                                            ? 'border border-orange-500 text-orange-500'
-                                                            : task.priority === 'very-high'
-                                                                ? 'border border-red-500 text-red-500'
-                                                                : 'border border-gray-500 text-gray-500' 
+                                            ? 'border border-gray-400 text-gray-400'
+                                            : task.priority === 'low'
+                                                ? 'border border-yellow-300 text-yellow-300'
+                                                : task.priority === 'medium'
+                                                    ? 'border border-yellow-500 text-yellow-500'
+                                                    : task.priority === 'high'
+                                                        ? 'border border-orange-500 text-orange-500'
+                                                        : task.priority === 'very-high'
+                                                            ? 'border border-red-500 text-red-500'
+                                                            : 'border border-gray-500 text-gray-500'
                                             }`}
                                     >
                                         Priority: {task.priority.charAt(0).toUpperCase() + task.priority.slice(1)}
                                     </span>
                                     <span
                                         className={`ml-2 inline-block px-2 py-1 text-xs font-semibold rounded-full ${task.status === 'completed'
-                                                ? 'border border-green-500 text-green-500'
-                                                : task.status === 'to-do'
-                                                    ? 'border border-gray-800 text-gray-800' 
-                                                    : task.status === 'in-progress'
-                                                        ? 'border border-blue-500 text-blue-500' 
-                                                        : task.status === 'in-review'
-                                                            ? 'border border-yellow-500 text-yellow-500' 
-                                                            : task.status === 'blocked'
-                                                                ? 'border border-red-500 text-red-500' 
-                                                                : 'border border-gray-500 text-gray-500' 
+                                            ? 'border border-green-500 text-green-500'
+                                            : task.status === 'to-do'
+                                                ? 'border border-gray-800 text-gray-800'
+                                                : task.status === 'in-progress'
+                                                    ? 'border border-blue-500 text-blue-500'
+                                                    : task.status === 'in-review'
+                                                        ? 'border border-yellow-500 text-yellow-500'
+                                                        : task.status === 'blocked'
+                                                            ? 'border border-red-500 text-red-500'
+                                                            : 'border border-gray-500 text-gray-500'
                                             }`}
                                     >
                                         Status: {task.status.charAt(0).toUpperCase() + task.status.slice(1)}
@@ -189,70 +195,72 @@ const TaskListAndGrid: React.FC<TaskListAndGridProps> = ({ tasks, isCardView, li
                                 <hr className="my-2 border-gray-300 dark:border-gray-700" />
                                 <div className="flex justify-between items-center text-xs text-gray-500 dark:text-gray-400">
                                     <div className='flex items-center'>
-                                    <AvatarWithName user={task.assignedBy}/>
+                                        <AvatarWithName user={task.assignedBy} />
                                     </div>
                                     <span className='flex items-center'><FaClock className="mr-2 text-gray-500 dark:text-gray-400" />{formatDateString(task.lastUpdated)}</span>
                                 </div>
                             </div>
                         ))}
                     </div>
-                ) : (
-                    <div>
-                        <div className="flex justify-between items-center px-4 py-2 bg-gray-200 dark:bg-gray-700 text-sm font-medium">
-                            <span className="w-1/12 flex items-center"><FaSortNumericDown className="mr-2" />S no.</span>
-                            <span className="w-2/12 flex items-center"><FaFlag className="mr-2" />Title</span>
-                            <span className="w-1/12 flex items-center"><FaExclamationCircle className="mr-2" />Priority</span>
-                            <span className="w-2/12 flex items-center"><FaCheckCircle className="mr-2" />Status</span>
-                            <span className="w-2/12 flex items-center"><FaProjectDiagram className="mr-2" />Project</span>
-                            <span className="w-2/12 flex items-center"><FaUser className="mr-2" />Created By</span>
-                            <span className="w-3/12 flex items-center"><FaClock className="mr-2" /> Last Updated</span>
-                        </div>
-                        {tasks.map((task, index) => (
-                            <div
-                                key={task._id}
-                                className="flex justify-between items-center px-4 py-2 border-b border-gray-300 dark:border-gray-600 text-sm"
-                            >
-                                <span className="w-1/12">{index + 1}</span>
-                                <span className="w-2/12">{task.title}</span>
-
-                                <span className="w-1/12"><span className={`inline-block px-2 py-1 text-xs font-semibold rounded-full ${task.priority === 'low'
-                                    ? 'border border-green-500 text-green-500'
-                                    : task.priority === 'medium'
-                                        ? 'border border-yellow-500 text-yellow-500'
-                                        : 'border border-red-500 text-red-500'
-                                    }`} > {task.priority.charAt(0).toUpperCase() + task.priority.slice(1)} </span></span>
-
-                                <span className="w-2/12"><span className={`ml-2 inline-block px-2 py-1 text-xs font-semibold rounded-full ${task.status === 'completed'
-                                    ? 'border border-green-500 text-green-500'
-                                    : task.status === 'to-do'
-                                        ? 'border border-orange-500 text-orange-500'
-                                        : 'border border-gray-500 text-gray-500'
-                                    }`} > {task.status.charAt(0).toUpperCase() + task.status.slice(1)} </span></span>
-
-                                <span className="w-2/12">{task.projectId.title}</span>
-                                <span className="w-2/12"> <AvatarWithName user={task.assignedBy}/></span>
-                                <span className="w-3/12 flex justify-between">{formatDateString(task.lastUpdated)}
-                                    <div className="relative">
-                                        <button
-                                            className="rounded-full hover:bg-gray-100 dark:hover:bg-gray-700 "
-                                            onClick={() => toggleTaskMenu(task._id)}>
-                                            <FaEllipsisV />
-                                        </button>
-                                        {menuOpen === task._id && (
-                                            <div className="absolute right-0 w-40 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-md">
-                                                <button className="w-full text-left px-3 py-1 text-sm hover:bg-gray-100 dark:hover:bg-gray-700"
-                                                    onClick={() => setShowTaskDetailsPopup(true)}>
-                                                    Details</button>
-                                                {/* <button className="w-full text-left px-3 py-1 text-sm hover:bg-gray-100 dark:hover:bg-gray-700">Mark as Completed</button> */}
-                                                <button className="w-full text-left px-3 py-1 text-sm hover:bg-gray-100 dark:hover:bg-gray-700 text-red-500" onClick={() => showConfirmationAlert(task._id)}>Delete</button>
-                                            </div>
-                                        )}
-                                    </div>
-                                </span>
+                ) : loading ?
+                    <DetailedTasksListSkeleton /> :
+                    (
+                        <div>
+                            <div className="flex justify-between items-center px-4 py-2 bg-gray-200 dark:bg-gray-700 text-sm font-medium">
+                                <span className="w-1/12 flex items-center"><FaSortNumericDown className="mr-2" />S no.</span>
+                                <span className="w-2/12 flex items-center"><FaFlag className="mr-2" />Title</span>
+                                <span className="w-1/12 flex items-center"><FaExclamationCircle className="mr-2" />Priority</span>
+                                <span className="w-2/12 flex items-center"><FaCheckCircle className="mr-2" />Status</span>
+                                <span className="w-2/12 flex items-center"><FaProjectDiagram className="mr-2" />Project</span>
+                                <span className="w-2/12 flex items-center"><FaUser className="mr-2" />Created By</span>
+                                <span className="w-3/12 flex items-center"><FaClock className="mr-2" /> Last Updated</span>
                             </div>
-                        ))}
-                    </div>
-                )}
+                            {tasks.map((task, index) => (
+                                <div
+                                    key={task._id}
+                                    className="flex justify-between items-center px-4 py-2 border-b border-gray-300 dark:border-gray-600 text-sm"
+                                >
+                                    <span className="w-1/12">{index + 1}</span>
+                                    <span className="w-2/12">{task.title}</span>
+
+                                    <span className="w-1/12"><span className={`inline-block px-2 py-1 text-xs font-semibold rounded-full ${task.priority === 'low'
+                                        ? 'border border-green-500 text-green-500'
+                                        : task.priority === 'medium'
+                                            ? 'border border-yellow-500 text-yellow-500'
+                                            : 'border border-red-500 text-red-500'
+                                        }`} > {task.priority.charAt(0).toUpperCase() + task.priority.slice(1)} </span></span>
+
+                                    <span className="w-2/12"><span className={`ml-2 inline-block px-2 py-1 text-xs font-semibold rounded-full ${task.status === 'completed'
+                                        ? 'border border-green-500 text-green-500'
+                                        : task.status === 'to-do'
+                                            ? 'border border-orange-500 text-orange-500'
+                                            : 'border border-gray-500 text-gray-500'
+                                        }`} > {task.status.charAt(0).toUpperCase() + task.status.slice(1)} </span></span>
+
+                                    <span className="w-2/12">{task.projectId.title}</span>
+                                    <span className="w-2/12"> <AvatarWithName user={task.assignedBy} /></span>
+                                    <span className="w-3/12 flex justify-between">{formatDateString(task.lastUpdated)}
+                                        <div className="relative">
+                                            <button
+                                                className="rounded-full hover:bg-gray-100 dark:hover:bg-gray-700 "
+                                                onClick={() => toggleTaskMenu(task._id)}>
+                                                <FaEllipsisV />
+                                            </button>
+                                            {menuOpen === task._id && (
+                                                <div className="absolute right-0 w-40 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-md">
+                                                    <button className="w-full text-left px-3 py-1 text-sm hover:bg-gray-100 dark:hover:bg-gray-700"
+                                                        onClick={() => setShowTaskDetailsPopup(true)}>
+                                                        Details</button>
+                                                    {/* <button className="w-full text-left px-3 py-1 text-sm hover:bg-gray-100 dark:hover:bg-gray-700">Mark as Completed</button> */}
+                                                    <button className="w-full text-left px-3 py-1 text-sm hover:bg-gray-100 dark:hover:bg-gray-700 text-red-500" onClick={() => showConfirmationAlert(task._id)}>Delete</button>
+                                                </div>
+                                            )}
+                                        </div>
+                                    </span>
+                                </div>
+                            ))}
+                        </div>
+                    )}
 
                 <div className="flex justify-between items-center mt-4">
                     <button

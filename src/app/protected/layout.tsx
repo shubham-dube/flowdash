@@ -4,6 +4,7 @@ import { useState } from "react";
 import Sidebar from "../components/common/sidebar";
 import MobileNav from "../components/common/mobileNav";
 import Topbar from "../components/common/topbar";
+import PrivateRoute from "@/lib/PrivateRoute";
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   const [isMobileOpen, setIsMobileOpen] = useState(false);
@@ -11,7 +12,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   const [isFullScreen, setFullScreen] = useState(false);
 
   const toggleMobileSidebar = () => setIsMobileOpen(!isMobileOpen);
-  const changeTab = (tabName: string) => setTab(tabName);
+  const changeTab = (tabName: string) => {
+    setTab(tabName)
+  };
 
   const toggleFullScreen = () => {
       if (!document.fullscreenElement) {
@@ -44,8 +47,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           toggleFullScreen={toggleFullScreen} 
           isFullScreen={isFullScreen}        
           />
-
-        <main className="flex-1 overflow-y-auto">{children}</main>
+          <PrivateRoute><main className="flex-1 overflow-y-auto">{children}</main></PrivateRoute>
       </div>
 
       {/* Mobile Navigation */}

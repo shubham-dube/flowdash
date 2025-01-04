@@ -2,21 +2,22 @@
 'use-client'
 
 import { FaEnvelope, FaLock } from "react-icons/fa";
-import { signInWithEmailAndPassword, GoogleAuthProvider, signInWithPopup, sendSignInLinkToEmail, User } from 'firebase/auth';
+import { signInWithEmailAndPassword, GoogleAuthProvider, signInWithPopup, sendSignInLinkToEmail, User, setPersistence, browserLocalPersistence } from 'firebase/auth';
 import { auth } from "@/lib/firebaseConfig";
-import { useState } from "react";
+import React, { useState } from "react";
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 import Cookies from 'js-cookie';
 import { IUser } from "@/types/models";
 
-export const LoginAuth = () => {
+export const LoginAuth: React.FC<{setLoading:(isLoading:boolean)=>void}> = ({setLoading}) => {
     const router = useRouter();
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [error, setError] = useState<string | null>(null);
 
     const handleEmailLogin = async (e: React.FormEvent) => {
+        setLoading(true);
         e.preventDefault();
         const response = await loginWithEmail(email, password);
         if (response.success) {
@@ -42,19 +43,24 @@ export const LoginAuth = () => {
 
                     setError(null);
                     router.push('/dashboard');
+                    setLoading(false);
                 } else {
+                    setLoading(false);
                     setError(result.message);
                 }
             } catch (error) {
+                setLoading(false);
                 console.log(error);
                 setError('Something went wrong.');
             }
         } else {
+            setLoading(false);
             setError(response.message);
         }
     };
 
     const handleGoogleAuthentication = async () => {
+        setLoading(true);
         const response = await loginWithGoogle();
         if (response.success) {
             setError(null);
@@ -81,13 +87,16 @@ export const LoginAuth = () => {
                     setError(null);
                     router.push('/dashboard');
                 } else {
+                    setLoading(false);
                     setError(result.message);
                 }
             } catch (error) {
+                setLoading(false);
                 console.log(error);
                 setError('Something went wrong.');
             }
         } else {
+            setLoading(false);
             setError(response.message);
         }
     };
@@ -175,6 +184,11 @@ export const LoginAuth = () => {
 
 const loginWithEmail = async (email: string, password: string) => {
     try {
+        const persistence = browserLocalPersistence;
+
+        if (persistence) {
+            await setPersistence(auth, persistence);
+        }
         const userCredential = await signInWithEmailAndPassword(auth, email, password);
         return { success: true, user: userCredential.user, message: "" };
     } catch (error: any) {
@@ -190,6 +204,11 @@ const loginWithEmail = async (email: string, password: string) => {
 const loginWithGoogle = async () => {
     const provider = new GoogleAuthProvider();
     try {
+        const persistence = browserLocalPersistence;
+
+        if (persistence) {
+            await setPersistence(auth, persistence);
+        }
         const user: User = (await signInWithPopup(auth, provider)).user;
         console.log('User logged in with Google:', user);
         return { success: true, user: user, message: "User Successfully logged In" };
@@ -203,24 +222,28 @@ const loginWithGoogle = async () => {
     }
 };
 
-export const SignupAuth = () => {
+export const SignupAuth: React.FC<{setLoading:(isLoading:boolean)=>void}> = ({setLoading})=>  {
     const router = useRouter();
     const [email, setEmail] = useState('');
     const [isLinkSent, setLinkBool] = useState(false);
     const [error, setError] = useState<string | null>(null);
 
     const handleEmailSignup = async (e: React.FormEvent) => {
+        setLoading(true);
         e.preventDefault();
         const response = await sendLoginLinktoEmail(email);
         if (response===true) {
             setError(null);
+            setLoading(false);
             setLinkBool(true);
         } else {
+            setLoading(false);
             setError("Error in sending link");
         }
     };
 
     const handleGoogleAuthentication = async () => {
+        setLoading(true);
         const response = await loginWithGoogle();
         if (response.success) {
 
@@ -249,14 +272,17 @@ export const SignupAuth = () => {
                     setError(null);
                     router.push('/dashboard');
                 } else {
+                    setLoading(false);
                     setError(result.message);
                 }
             } catch (error) {
+                setLoading(false);
                 console.log(error);
                 setError('Something went wrong.');
             }
 
         } else {
+            setLoading(false);
             setError(response.message);
         }
     };

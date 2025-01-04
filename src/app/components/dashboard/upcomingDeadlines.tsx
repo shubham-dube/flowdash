@@ -6,11 +6,13 @@ import jwt from 'jsonwebtoken';
 import { ITask } from "@/types/models";
 import TaskDetailsUIComponent from "../tasks/Popups/taskDetailsUI";
 import { DateTimeFormatOptions } from "@/types/ui.props";
+import OngoingTasksSkeleton from "./skeletons/onGoingTaskSkeleton";
 
 const UpcomingDeadlines = () => {
     const [tasks, setTasks] = useState<ITask[]>([]);
     const [taskDetailsPopup, setTaskDetailsPopup] = useState<boolean>(false);
     const [clickedTask, setClickedTask] = useState<string>("");
+    const [loading, setLoading] = useState<boolean>(false);
 
     const token: string = Cookies.get('jwtToken') as string;
     const jwtPayload: JWTPayload = jwt.decode(token) as JWTPayload;
@@ -21,6 +23,7 @@ const UpcomingDeadlines = () => {
 
     const fetchTasks = async () => {
         try {
+            setLoading(true);
             const response = await fetch(`/api/task?assignedTo=${jwtPayload._id}&limit=20&status=in-progress,to-do&deadlineBefore=${sevenDayAfter.toISOString()}&deadlineAfter=${today.toISOString()}`, {
                 method: 'GET',
                 headers: {
@@ -30,7 +33,9 @@ const UpcomingDeadlines = () => {
             });
             const data = await response.json();
             setTasks(data.tasks);
+            setLoading(false);
         } catch (error) {
+            setLoading(true);
             console.error('Error fetching tasks:', error);
         }
     };
@@ -56,6 +61,10 @@ const UpcomingDeadlines = () => {
         fetchTasks();
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
+
+    if (loading) {
+        return <OngoingTasksSkeleton />
+    }
 
     return (
         <div className="bg-white dark:bg-gray-800 p-5 rounded-xl w-full shadow">

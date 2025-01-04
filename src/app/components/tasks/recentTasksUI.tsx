@@ -1,17 +1,20 @@
 import { ITask } from '@/types/models';
 import { useEffect, useState } from 'react';
 import Cookies from 'js-cookie';
-import {  FaClock, FaExclamationCircle, FaFlag, FaProjectDiagram, } from 'react-icons/fa';
+import { FaClock, FaExclamationCircle, FaFlag, FaProjectDiagram, } from 'react-icons/fa';
 import { DateTimeFormatOptions } from '@/types/ui.props';
 import jwt from 'jsonwebtoken';
+import RecentCompletedTasksSkeleton from './skeletons/recentCompletedTaskSkeleton';
 
-const RecentTasksUI: React.FC<{ tasks: ITask[] }> = ({ tasks }) => {
+const RecentTasksUI: React.FC<{ tasks: ITask[] }> = ({  }) => {
   const [completedTasks, setCompletedTasks] = useState<ITask[]>([]);
+  const [loading, setLoading] = useState<boolean>(false);
 
   const token: string = Cookies.get('jwtToken') as string;
   const jwtPayload: JWTPayload = jwt.decode(token) as JWTPayload;
 
   const fetchCompletedTasks = async () => {
+    setLoading(true);
     try {
       const response = await fetch(`/api/task?status=completed&limit=${3}&assignedTo=${jwtPayload._id}`, {
         method: 'GET',
@@ -22,7 +25,9 @@ const RecentTasksUI: React.FC<{ tasks: ITask[] }> = ({ tasks }) => {
       });
       const data = await response.json();
       setCompletedTasks(data.tasks);
+      setLoading(false);
     } catch (error) {
+      setLoading(false);
       console.error('Error fetching tasks:', error);
     }
   };
@@ -45,7 +50,11 @@ const RecentTasksUI: React.FC<{ tasks: ITask[] }> = ({ tasks }) => {
   useEffect(() => {
     fetchCompletedTasks();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [tasks]);
+  }, []);
+
+  if (loading) {
+    return <RecentCompletedTasksSkeleton />
+  }
 
   return (
     <div className="flex flex-col space-y-4 lg:w-4/6 lg:mr-4">

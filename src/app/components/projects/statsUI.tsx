@@ -2,17 +2,20 @@ import React, { useEffect, useState } from "react";
 import Cookies from 'js-cookie';
 import jwt from 'jsonwebtoken';
 import { FaCheckCircle, FaProjectDiagram, FaSortNumericDownAlt, FaTasks } from "react-icons/fa";
+import StatLoadingSkeleton from "./skeletons/statLoadingSkeleton";
 
 const StatsUI = () => {
   const [noOfProjects, setNoOfProjects] = useState<number>(0);
   const [projectsCompleted, setProjectsCompleted] = useState<number>(0);
   const [noOfTasks, setNoOfTasks] = useState<number>(0);
   const [tasksCompleted, setTasksCompleted] = useState<number>(0);
+  const [loading, setLoading] = useState<boolean>(false);
 
   const token: string = Cookies.get('jwtToken') as string;
   const jwtPayload: JWTPayload = jwt.decode(token) as JWTPayload;
 
   const fetchStats = async () => {
+    setLoading(true);
     try {
       const projectResponse = await fetch(`/api/project/stats?teamMember=${jwtPayload._id}`, {
         method: 'GET',
@@ -35,8 +38,10 @@ const StatsUI = () => {
       const projectStatsdata = await projectResponse.json();
       setNoOfProjects(projectStatsdata.projectsCount);
       setProjectsCompleted(projectStatsdata.completed);
-    } catch (error) {
-      console.error('Error fetching projects:', error);
+      setLoading(false);
+  } catch (error) {
+    setLoading(false);
+    console.error('Error fetching projects:', error);
     }
   };
 
@@ -45,6 +50,9 @@ const StatsUI = () => {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  if(loading){
+    return <StatLoadingSkeleton/>
+  }
 
   return (<div className="flex flex-col lg:w-2/6 lg:mt-0 space-y-2 justify-between h-full">
     

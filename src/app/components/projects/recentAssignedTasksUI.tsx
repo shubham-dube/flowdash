@@ -2,21 +2,24 @@ import { IProject, ITask } from '@/types/models';
 import { useEffect, useState } from 'react';
 import jwt from 'jsonwebtoken';
 import Cookies from 'js-cookie';
-import {  FaClock,  FaExclamationCircle,  FaEye, FaFlag,  FaProjectDiagram, FaUser, } from 'react-icons/fa';
+import { FaClock, FaExclamationCircle, FaEye, FaFlag, FaProjectDiagram, FaUser, } from 'react-icons/fa';
 import { AvatarWithName } from '../tasks/Popups/statusAndPriorityVisual';
 import TaskDetailsUIComponent from '../tasks/Popups/taskDetailsUI';
 import { DateTimeFormatOptions } from '@/types/ui.props';
+import RecentCompletedTasksSkeleton from '../tasks/skeletons/recentCompletedTaskSkeleton';
 
 
-const RecentAssignedTasksUI: React.FC<{ projects: IProject[] }> = ({ projects }) => {
+const RecentAssignedTasksUI: React.FC<{ projects: IProject[] }> = ({ }) => {
   const [recentAssignedTask, setRecentAssignedTasks] = useState<ITask[]>([]);
   const [taskDetailsPopup, setTaskDetailsPopup] = useState<boolean>(false);
   const [clickedTask, setClickedTask] = useState<string>("");
+  const [loading, setLoading] = useState<boolean>(false);
 
   const token: string = Cookies.get('jwtToken') as string;
   const jwtPayload: JWTPayload = jwt.decode(token) as JWTPayload;
 
   const fetchRecentAssignedTasks = async () => {
+    setLoading(true);
     try {
       const response = await fetch(`/api/task?assignedTo=${jwtPayload._id}&limit=3`, {
         method: 'GET',
@@ -27,7 +30,9 @@ const RecentAssignedTasksUI: React.FC<{ projects: IProject[] }> = ({ projects })
       });
       const data = await response.json();
       setRecentAssignedTasks(data.tasks);
+      setLoading(false);
     } catch (error) {
+      setLoading(false);
       console.error('Error fetching tasks:', error);
     }
   };
@@ -50,7 +55,11 @@ const RecentAssignedTasksUI: React.FC<{ projects: IProject[] }> = ({ projects })
   useEffect(() => {
     fetchRecentAssignedTasks();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [projects]);
+  }, []);
+
+  if (loading) {
+    return <RecentCompletedTasksSkeleton />
+  }
 
   return (
     <div className="flex flex-col space-y-4 lg:w-4/6 lg:mr-4 overflow-hidden">
@@ -69,10 +78,12 @@ const RecentAssignedTasksUI: React.FC<{ projects: IProject[] }> = ({ projects })
               key={task._id}
               className="flex justify-between items-center px-4 py-2  dark:border-gray-600 text-sm"
             >
-              <span className="lg:w-3/12 md:w-3/12 w-5/12 pr-2 flex"><button className='mr-2' onClick={()=>{setTaskDetailsPopup(true);
-                  setClickedTask(task._id);}}> <FaEye/></button>{task.title}</span>
+              <span className="lg:w-3/12 md:w-3/12 w-5/12 pr-2 flex"><button className='mr-2' onClick={() => {
+                setTaskDetailsPopup(true);
+                setClickedTask(task._id);
+              }}> <FaEye /></button>{task.title}</span>
               <span className="w-3/12 lg:block md:block hidden">{task.projectId.title}</span>
-              <span className="lg:w-3/12 w-4/12 mr-3"><AvatarWithName user={task.assignedBy}/></span>
+              <span className="lg:w-3/12 w-4/12 mr-3"><AvatarWithName user={task.assignedBy} /></span>
               <span className="w-2/12 flex justify-between lg:block hidden mr-1">{formatDateString(task.createdAt)}</span>
 
               <span className="lg:w-1/12 w-2/12 mr-2 pr-2 flex justify-between"><span className={` inline-block px-2 py-1 text-xs font-semibold rounded-full ${task.priority === 'low'
@@ -88,7 +99,7 @@ const RecentAssignedTasksUI: React.FC<{ projects: IProject[] }> = ({ projects })
       </div>
 
       <div className='z-50'>
-          {taskDetailsPopup && <TaskDetailsUIComponent task={recentAssignedTask.find(obj => obj._id === clickedTask) as ITask} setShowTaskDetailsPopup={setTaskDetailsPopup} fetchTasks={fetchRecentAssignedTasks} />}
+        {taskDetailsPopup && <TaskDetailsUIComponent task={recentAssignedTask.find(obj => obj._id === clickedTask) as ITask} setShowTaskDetailsPopup={setTaskDetailsPopup} fetchTasks={fetchRecentAssignedTasks} />}
       </div>
     </div>
   );

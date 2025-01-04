@@ -1,3 +1,4 @@
+import { AuthProvider } from '@/context/AuthContext';
 import ThemeProvider from '../context/ThemeProvider';
 import './globals.css';
 
@@ -12,7 +13,7 @@ export default function RootLayout({children}: {children: React.ReactNode;}) {
     <html lang="en">
       <body className='font-poppins'>
         <ThemeProvider>
-          {children}
+          <AuthProvider >{children}</AuthProvider>
           </ThemeProvider>
       </body>
     </html>

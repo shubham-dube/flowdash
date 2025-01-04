@@ -7,13 +7,14 @@ import { ITask, IUser } from '@/types/models';
 import Cookies from 'js-cookie';
 import { useState, useEffect } from 'react';
 
-const ProjectTasksTabUI: React.FC<{id: string, members: IUser[]}> = ({id, members}) => {
+const ProjectTasksTabUI: React.FC<{ id: string, members: IUser[] }> = ({ id, members }) => {
     const [tasks, setTasks] = useState<ITask[]>([]);
     const [isCardView, setIsCardView] = useState<boolean>(true);
     const [searchQuery, setSearchQuery] = useState<string>("");
     const [showFilterPopup, setShowFilterPopup] = useState<boolean>(false);
     const [showCreateTaskPopup, setShowCreateTaskPopup] = useState<boolean>(false);
     const [filter, setFilter] = useState<string>("");
+    const [loading, setLoading] = useState<boolean>(false);
 
     // Filter Component Props
     const [priority, setPriority] = useState<string[]>([]);
@@ -75,6 +76,7 @@ const ProjectTasksTabUI: React.FC<{id: string, members: IUser[]}> = ({id, member
 
     // Fetch tasks from API
     const fetchTasks = async () => {
+        setLoading(true);
         try {
             const response = await fetch(`/api/task?search=${searchQuery}&projectId=${id}&${filter}&limit=${limit}&skip=${limit * (currentPage - 1)}`, {
                 method: 'GET',
@@ -85,11 +87,13 @@ const ProjectTasksTabUI: React.FC<{id: string, members: IUser[]}> = ({id, member
             });
             const data = await response.json();
             console.log(data);
-            if(data.tasks){
+            if (data.tasks) {
                 setTasks(data.tasks);
                 setTotalTasks(data.totalCount);
             }
+            setLoading(false);
         } catch (error) {
+            setLoading(false);
             console.error('Error fetching tasks:', error);
         }
     };
@@ -107,13 +111,13 @@ const ProjectTasksTabUI: React.FC<{id: string, members: IUser[]}> = ({id, member
 
             {/* Tasks Operation Section */}
             <TaskOperationsUI setSearchQuery={setSearchQuery} setCurrentPage={setCurrentPage}
-                setShowFilterPopup={setShowFilterPopup} setShowCreateTaskPopup={setShowCreateTaskPopup} setIsCardView={setIsCardView}
-                isCardView={isCardView} />
+            setShowFilterPopup={setShowFilterPopup} setShowCreateTaskPopup={setShowCreateTaskPopup} setIsCardView={setIsCardView}
+            isCardView={isCardView} loading={loading} />
 
 
             {/* Tasks Section */}
             <TaskListAndGrid tasks={tasks} isCardView={isCardView} limit={limit} setLimit={setLimit} currentPage={currentPage}
-                setCurrentPage={setCurrentPage} totalTasks={totalTasks} fetchTasks={fetchTasks} setIsCardView={setIsCardView} />
+            setCurrentPage={setCurrentPage} totalTasks={totalTasks} fetchTasks={fetchTasks} setIsCardView={setIsCardView} loading={loading} />
 
 
             {/* Filter Popup */}
@@ -125,8 +129,8 @@ const ProjectTasksTabUI: React.FC<{id: string, members: IUser[]}> = ({id, member
                 setShowFilterPopup={setShowFilterPopup} applyFilters={applyFilters} resetFilters={resetFilters} isProjectFilter={false} />}
 
             {/* Create Task Popup */}
-            {showCreateTaskPopup && <CreateTaskComponent setShowCreateTaskPopup={setShowCreateTaskPopup} fetchTasks={fetchTasks} 
-            isRelatedProjectFeild={false} members={members} projectId={id} />}
+            {showCreateTaskPopup && <CreateTaskComponent setShowCreateTaskPopup={setShowCreateTaskPopup} fetchTasks={fetchTasks}
+                isRelatedProjectFeild={false} members={members} projectId={id} />}
 
 
         </div>

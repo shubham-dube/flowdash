@@ -1,11 +1,14 @@
 'use client';
 
-import React from 'react';
+import React, { useState } from 'react';
 import MyHeader from '../components/home/MyHeader';
 import {LoginAuth} from "@/app/components/authentication/forms";
 import Link from 'next/link';
+import Spinner from '../components/common/circularLoadingIndicator';
 
 const LoginPage = () => {
+    const [isLoading, setLoading] = useState<boolean>(false);
+
     return (
         <div className="min-h-screen flex items-center justify-center bg-gradient-to-r from-blue-200 to-orange-200 dark:bg-gradient-to-br dark:from-blue-900 dark:to-orange-600">
             
@@ -19,7 +22,7 @@ const LoginPage = () => {
                 Please sign in to your account
             </p>
 
-            <LoginAuth/>
+            <LoginAuth setLoading={setLoading}/>
 
             <p className="text-sm text-gray-500 dark:text-gray-300 text-center mt-4">
                 Don’t have an account?{' '}
@@ -27,7 +30,8 @@ const LoginPage = () => {
                 Sign Up
                 </Link>
             </p>
-        </div>      
+        </div>    
+        {isLoading && (<div className='fixed inset-0 bg-gray-900 bg-opacity-50 flex items-center justify-center'><Spinner className='h-10 w-10 border-blue-500'/></div>  )}
         </div>
     );
 };

@@ -5,10 +5,14 @@ import { DateTimeFormatOptions, ProjectListAndGridProps } from '@/types/ui.props
 import { AvatarWithName } from '../tasks/Popups/statusAndPriorityVisual';
 import { ITask } from '@/types/models';
 import { useRouter } from 'next/navigation';
+import ProjectsGridSkeleton from './skeletons/projectGrid';
+import DetailedTasksListSkeleton from '../tasks/skeletons/taskListSkeleton';
+import Spinner from '../common/circularLoadingIndicator';
 
 const ProjectListAndGrid: React.FC<ProjectListAndGridProps> = ({ projects, isCardView, limit, setLimit,
-    currentPage, setCurrentPage, totalProjects, setIsCardView, wantMetaOptions = true }) => {
+    currentPage, setCurrentPage, totalProjects, setIsCardView, loading,wantMetaOptions = true }) => {
     const router = useRouter();
+    const [isNavigated, setIsNavigated] = useState<boolean>(false);
 
     const [menuOpen, setMenuOpen] = useState("");
     const { width } = useDeviceSize();
@@ -63,6 +67,10 @@ const ProjectListAndGrid: React.FC<ProjectListAndGridProps> = ({ projects, isCar
             console.log('Desktop view');
         }
     }, [isCardView, setIsCardView, width]);
+
+    if(isCardView && loading){
+        return <ProjectsGridSkeleton wantMetaOptions={true}/>
+    }
 
     return (<div className="projects-section">
         <div className="flex items-center space-x-2 mt-4 w-full">
@@ -129,7 +137,7 @@ const ProjectListAndGrid: React.FC<ProjectListAndGridProps> = ({ projects, isCar
                                             {menuOpen === project._id && (
                                                 <div className="absolute right-0 w-40 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-md">
                                                     <button className="w-full text-left px-3 py-1 text-sm hover:bg-gray-100 dark:hover:bg-gray-700"
-                                                        onClick={() => { router.push(`projects/${project._id}`) }}>Details</button>
+                                                        onClick={() => { router.push(`projects/${project._id}`); setIsNavigated(true); }}>Details</button>
                                                     {/* <button className="w-full text-left px-3 py-1 text-sm hover:bg-gray-100 dark:hover:bg-gray-700">Mark as Completed</button> */}
                                                     {/* <button className="w-full text-left px-3 py-1 text-sm hover:bg-gray-100 dark:hover:bg-gray-700 text-red-500">Delete</button> */}
                                                 </div>
@@ -189,7 +197,8 @@ const ProjectListAndGrid: React.FC<ProjectListAndGridProps> = ({ projects, isCar
                             );
                         })}
                     </div>
-                ) : (
+                ) : loading?<DetailedTasksListSkeleton/>: 
+                (
                     <div>
                         <div className="flex justify-between items-center px-4 py-2 bg-gray-200 dark:bg-gray-700 text-sm font-medium">
                             <span className="w-1/12 flex items-center"><FaSortNumericDown className="mr-2" />S no.</span>
@@ -268,7 +277,7 @@ const ProjectListAndGrid: React.FC<ProjectListAndGridProps> = ({ projects, isCar
                                             {menuOpen === project._id && (
                                                 <div className="absolute right-0 w-40 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-md">
                                                     <button className="w-full text-left px-3 py-1 text-sm hover:bg-gray-100 dark:hover:bg-gray-700"
-                                                        onClick={() => { router.push(`projects/${project._id}`) }}>
+                                                        onClick={() => { router.push(`projects/${project._id}`); setIsNavigated(true) }}>
                                                         Details</button>
                                                     {/* <button className="w-full text-left px-3 py-1 text-sm hover:bg-gray-100 dark:hover:bg-gray-700">Mark as Completed</button>
                                                     <button className="w-full text-left px-3 py-1 text-sm hover:bg-gray-100 dark:hover:bg-gray-700 text-red-500">Delete</button> */}
@@ -306,6 +315,10 @@ const ProjectListAndGrid: React.FC<ProjectListAndGridProps> = ({ projects, isCar
 
             </div>
         </div>
+        {isNavigated && (
+            <div className='fixed inset-0 bg-gray-900 bg-opacity-50 flex items-center justify-center'> 
+            <Spinner className='h-10 w-10 border-white '/></div>
+        )}
     </div>
     );
 }
