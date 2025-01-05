@@ -6,7 +6,7 @@ import jwt from 'jsonwebtoken';
 import Sidebar from "../components/common/sidebar";
 import MobileNav from "../components/common/mobileNav";
 import Topbar from "../components/common/topbar";
-import PrivateRoute from "@/lib/PrivateRoute";
+import PrivateRoute from "../../lib/PrivateRoute";
 import { Realtime } from "ably";
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

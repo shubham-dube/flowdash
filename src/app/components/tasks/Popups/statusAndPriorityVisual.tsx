@@ -1,4 +1,4 @@
-import { IUser } from '@/types/models';
+import { IUser } from '../../../../types/models';
 import Image from 'next/image';
 import Cookies from 'js-cookie';
 import jwt, { JwtPayload } from 'jsonwebtoken';

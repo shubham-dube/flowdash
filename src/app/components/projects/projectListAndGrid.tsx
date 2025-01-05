@@ -1,9 +1,9 @@
 import { useEffect, useState } from 'react';
 import { FaCheckCircle, FaCircle, FaClock, FaEllipsisH, FaEllipsisV, FaFlag, FaProjectDiagram, FaSortNumericDown, FaUser } from 'react-icons/fa';
 import useDeviceSize from '../common/deviceUtils';
-import { DateTimeFormatOptions, ProjectListAndGridProps } from '@/types/ui.props';
+import { DateTimeFormatOptions, ProjectListAndGridProps } from '../../../types/ui.props';
 import { AvatarWithName } from '../tasks/Popups/statusAndPriorityVisual';
-import { ITask } from '@/types/models';
+import { ITask } from '../../../types/models';
 import { useRouter } from 'next/navigation';
 import ProjectsGridSkeleton from './skeletons/projectGrid';
 import DetailedTasksListSkeleton from '../tasks/skeletons/taskListSkeleton';

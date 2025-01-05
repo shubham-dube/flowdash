@@ -1,5 +1,5 @@
 'use client';
-import {  IUser } from '@/types/models';
+import {  IUser } from '../../../../../types/models';
 import { useState, useEffect } from 'react';
 import UserOperationsUI from './membersOperation';
 import MembersListAndGrid from './membersListAndGrid';

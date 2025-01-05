@@ -1,4 +1,4 @@
-import { DateTimeFormatOptions } from "@/types/ui.props";
+import { DateTimeFormatOptions } from "../../../../types/ui.props";
 import { FaProjectDiagram } from "react-icons/fa";
 
 

@@ -5,8 +5,8 @@ import 'react-datepicker/dist/react-datepicker.css';
 import { debounce } from 'lodash';
 import Cookies from 'js-cookie';
 import jwt from 'jsonwebtoken';
-import { CreateTaskUIProps } from '@/types/ui.props';
-import { IProject, ITask, IUser } from '@/types/models';
+import { CreateTaskUIProps } from '../../../../types/ui.props';
+import { IProject, ITask, IUser } from '../../../../types/models';
 
 const CreateTaskComponent: React.FC<CreateTaskUIProps> = ({ fetchTasks, setShowCreateTaskPopup, isRelatedProjectFeild = true, members = [], projectId = "" }) => {
     const [priority, setPriority] = useState<string>("");

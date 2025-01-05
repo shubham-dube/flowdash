@@ -1,8 +1,8 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { IProject } from '@/types/models';
+import { IProject } from '../types/models';
 import { ProjectModel } from '../models/index';
 import { FilterQuery } from 'mongoose';
-import { publishToProjectChannel, publishToUserChannel } from '@/lib/ablyUtility';
+import { publishToProjectChannel, publishToUserChannel } from '../lib/ablyUtility';
 
 // Create a new project
 export const createProject = async (data: Partial<IProject>) => {

@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
-import {  getTasksByQuery } from '@/services/taskServices';
+import {  getTasksByQuery } from '../../../../services/taskServices';
 import { FilterQuery } from 'mongoose';
-import { ITask } from '@/types/models';
+import { ITask } from '../../../../types/models';
 
 export async function GET(request: Request) {
     const { searchParams } = new URL(request.url);

@@ -4,8 +4,8 @@ import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import { debounce } from 'lodash';
 import Cookies from 'js-cookie';
-import { IUser } from '@/types/models';
-import { ProjectFilterUIProps } from '@/types/ui.props';
+import { IUser } from '../../../../types/models';
+import { ProjectFilterUIProps } from '../../../../types/ui.props';
 
 const ProjectFilterComponent: React.FC<ProjectFilterUIProps> = ({ status, setStatus, selectedUsers, setSelectedUsers, deadlineBefore,
   setDeadlineBefore, deadlineAfter, setDeadlineAfter, lastUpdatedBefore, setLastUpdatedBefore, lastUpdatedAfter, setLastUpdatedAfter,

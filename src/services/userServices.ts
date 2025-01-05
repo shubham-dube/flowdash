@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { IUser } from '@/types/models';
+import { IUser } from '../types/models';
 import { UserModel } from '../models/index';
 import { FilterQuery } from 'mongoose';
 

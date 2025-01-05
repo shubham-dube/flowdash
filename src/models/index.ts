@@ -2,8 +2,8 @@ import mongoose, { Model } from "mongoose";
 import { ProjectSchema } from "./projectModel";
 import { TaskSchema } from "./taskModel";
 import { UserSchema } from "./userModel";
-import connectDB from "@/lib/mongodb";
-import { IProject, ITask, IUser } from "@/types/models";
+import connectDB from "../lib/mongodb";
+import { IProject, ITask, IUser } from "../types/models";
 
 connectDB();
 const UserModel: Model<IUser> = mongoose.model<IUser>('Users', UserSchema)

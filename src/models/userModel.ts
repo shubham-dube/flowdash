@@ -1,5 +1,5 @@
-import {  IUser } from '@/types/models';
-import mongoose, { Schema, Model } from 'mongoose';
+import {  IUser } from '../types/models';
+import mongoose, { Schema } from 'mongoose';
 
 const userSchema: Schema = new mongoose.Schema({
     firebaseId: {

@@ -1,4 +1,4 @@
-import { AuthProvider } from '@/context/AuthContext';
+import { AuthProvider } from '../context/AuthContext';
 import ThemeProvider from '../context/ThemeProvider';
 import './globals.css';
 

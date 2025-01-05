@@ -5,9 +5,9 @@ import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import { debounce } from 'lodash';
 import Cookies from 'js-cookie';
-import { IProject, IUser } from '@/types/models';
+import { IProject, IUser } from '../../../../types/models';
 import jwt from 'jsonwebtoken';
-import { CreateProjectUIProps } from '@/types/ui.props';
+import { CreateProjectUIProps } from '../../../../types/ui.props';
 
 const CreateProjectComponent: React.FC<CreateProjectUIProps> = ({ fetchProjects, setShowCreateProjectPopup }) => {
     const [status, setStatus] = useState<string>("");

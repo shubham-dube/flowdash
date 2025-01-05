@@ -2,13 +2,13 @@
 import React, { useEffect, useState } from "react";
 import Cookies from 'js-cookie';
 import jwt from 'jsonwebtoken';
-import StatGrids from "@/app/components/dashboard/statGrids";
-import UpcomingDeadlines from "@/app/components/dashboard/upcomingDeadlines";
-import OnGoingTasks from "@/app/components/dashboard/ongoingTasks";
-import ProjectsWorkingOn from "@/app/components/dashboard/projectWorkingOn";
-import CustomPieChart from "@/app/components/tasks/pieChart";
-import { ITask } from "@/types/models";
-import TasksChartSkeleton from "@/app/components/tasks/skeletons/pieChartSkeleton";
+import StatGrids from "../../components/dashboard/statGrids";
+import UpcomingDeadlines from "../../components/dashboard/upcomingDeadlines";
+import OnGoingTasks from "../../components/dashboard/ongoingTasks";
+import ProjectsWorkingOn from "../../components/dashboard/projectWorkingOn";
+import CustomPieChart from "../../components/tasks/pieChart";
+import { ITask } from "../../../types/models";
+import TasksChartSkeleton from "../../components/tasks/skeletons/pieChartSkeleton";
 import { motion } from "framer-motion";
 
 const DashboardPage = () => {

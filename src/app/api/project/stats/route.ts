@@ -1,5 +1,5 @@
-import {  getProjectsByQuery } from "@/services/projectServices";
-import { IProject } from "@/types/models";
+import {  getProjectsByQuery } from "../../../../services/projectServices";
+import { IProject } from "../../../../types/models";
 import { FilterQuery } from "mongoose";
 import { NextResponse } from "next/server";
 

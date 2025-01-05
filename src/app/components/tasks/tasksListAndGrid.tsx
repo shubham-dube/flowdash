@@ -3,7 +3,7 @@ import { FaCheckCircle, FaClock, FaEllipsisV, FaExclamationCircle, FaFlag, FaPro
 import TaskDetailsUIComponent from './Popups/taskDetailsUI';
 import useDeviceSize from '../common/deviceUtils';
 import { AvatarWithName } from './Popups/statusAndPriorityVisual';
-import { DateTimeFormatOptions, TaskListAndGridProps } from '@/types/ui.props';
+import { DateTimeFormatOptions, TaskListAndGridProps } from '../../../types/ui.props';
 import Cookies from 'js-cookie';
 import DetailedTasksListSkeleton from './skeletons/taskListSkeleton';
 import ProjectsGridSkeleton from '../projects/skeletons/projectGrid';

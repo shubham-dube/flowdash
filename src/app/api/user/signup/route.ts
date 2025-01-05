@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { createUser  } from '@/services/userServices';
-import { IUser } from '@/types/models';
+import { createUser  } from '../../../../services/userServices';
+import { IUser } from '../../../../types/models';
 import jwt from 'jsonwebtoken';
 
 const JWT_SECRET = process.env.JWT_SECRET || 'secret';

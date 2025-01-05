@@ -1,4 +1,4 @@
-import {  UserOperationsUIProps } from '@/types/ui.props';
+import {  UserOperationsUIProps } from '../../../../../types/ui.props';
 import {  FaList, FaPlus, FaSearch, FaTh} from 'react-icons/fa';
 
 const UserOperationsUI: React.FC<UserOperationsUIProps> = ({setSearchQuery,  setShowAddMemberPopup, 

@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
-import {  getUser  } from '@/services/userServices';
-import { IUser } from '@/types/models';
+import {  getUser  } from '../../../../services/userServices';
+import { IUser } from '../../../../types/models';
 import jwt from 'jsonwebtoken';
 import { FilterQuery } from 'mongoose';
 

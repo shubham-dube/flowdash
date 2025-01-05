@@ -1,14 +1,14 @@
 'use client';
-import StatsUI from '@/app/components/projects/statsUI';
-import RecentAssignedTasksUI from '@/app/components/projects/recentAssignedTasksUI';
-import { IProject } from '@/types/models';
+import StatsUI from '../../components/projects/statsUI';
+import RecentAssignedTasksUI from '../../components/projects/recentAssignedTasksUI';
+import { IProject } from '../../../types/models';
 import jwt from 'jsonwebtoken';
 import Cookies from 'js-cookie';
 import { useState, useEffect } from 'react';
-import ProjectOperationsUI from '@/app/components/projects/projectOperationsUI';
-import ProjectListAndGrid from '@/app/components/projects/projectListAndGrid';
-import ProjectFilterComponent from '@/app/components/projects/Popups/projectFiltersPopupUI';
-import CreateProjectComponent from '@/app/components/projects/Popups/createProjectPopupUI';
+import ProjectOperationsUI from '../../components/projects/projectOperationsUI';
+import ProjectListAndGrid from '../../components/projects/projectListAndGrid';
+import ProjectFilterComponent from '../../components/projects/Popups/projectFiltersPopupUI';
+import CreateProjectComponent from '../../components/projects/Popups/createProjectPopupUI';
 import { Realtime } from 'ably';
 
 const ProjectsPage = () => {

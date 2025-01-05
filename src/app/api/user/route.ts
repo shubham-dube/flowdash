@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
-import { createUser, getUser, getUsersByQuery, updateUser, deleteUser, getAllUsers } from '@/services/userServices';
-import { IUser } from '@/types/models';
+import { createUser, getUser, getUsersByQuery, updateUser, deleteUser, getAllUsers } from '../../../services/userServices';
+import { IUser } from '../../../types/models';
 import { FilterQuery } from 'mongoose';
 
 // POST: Create a user

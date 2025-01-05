@@ -2,7 +2,7 @@
 import React, { useEffect, useState } from "react";
 import Cookies from 'js-cookie';
 import jwt from 'jsonwebtoken';
-import { IProject } from "@/types/models";
+import { IProject } from "../../../types/models";
 import ProjectListAndGrid from "../projects/projectListAndGrid";
 import { useRouter } from "next/navigation";
 import ProjectsGridSkeleton from "../projects/skeletons/projectGrid";

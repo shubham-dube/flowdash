@@ -3,12 +3,12 @@
 
 import { FaEnvelope, FaLock } from "react-icons/fa";
 import { signInWithEmailAndPassword, GoogleAuthProvider, signInWithPopup, sendSignInLinkToEmail, User, setPersistence, browserLocalPersistence } from 'firebase/auth';
-import { auth } from "@/lib/firebaseConfig";
+import { auth } from "../../../lib/firebaseConfig";
 import React, { useState } from "react";
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 import Cookies from 'js-cookie';
-import { IUser } from "@/types/models";
+import { IUser } from "../../../types/models";
 
 export const LoginAuth: React.FC<{setLoading:(isLoading:boolean)=>void}> = ({setLoading}) => {
     const router = useRouter();

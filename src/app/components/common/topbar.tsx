@@ -1,6 +1,6 @@
 'use client';
 
-import ThemeToggle from "@/lib/toggleTheme";
+import ThemeToggle from "../../../lib/toggleTheme";
 import Link from "next/link";
 import { FaCompress, FaExpand } from "react-icons/fa";
 import { FiMenu, FiBell, FiUser } from "react-icons/fi";

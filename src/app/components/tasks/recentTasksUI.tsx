@@ -1,8 +1,8 @@
-import { ITask } from '@/types/models';
+import { ITask } from '../../../types/models';
 import { useEffect, useState } from 'react';
 import Cookies from 'js-cookie';
 import { FaClock, FaExclamationCircle, FaFlag, FaProjectDiagram, } from 'react-icons/fa';
-import { DateTimeFormatOptions } from '@/types/ui.props';
+import { DateTimeFormatOptions } from '../../../types/ui.props';
 import jwt from 'jsonwebtoken';
 import RecentCompletedTasksSkeleton from './skeletons/recentCompletedTaskSkeleton';
 import { Realtime } from 'ably';

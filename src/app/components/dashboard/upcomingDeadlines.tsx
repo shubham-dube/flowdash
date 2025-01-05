@@ -3,9 +3,9 @@ import React, { useEffect, useState } from "react";
 import { FaEye } from "react-icons/fa";
 import Cookies from 'js-cookie';
 import jwt from 'jsonwebtoken';
-import { ITask } from "@/types/models";
+import { ITask } from "../../../types/models";
 import TaskDetailsUIComponent from "../tasks/Popups/taskDetailsUI";
-import { DateTimeFormatOptions } from "@/types/ui.props";
+import { DateTimeFormatOptions } from "../../../types/ui.props";
 import OngoingTasksSkeleton from "./skeletons/onGoingTaskSkeleton";
 import { AnimatePresence, motion } from "framer-motion";
 

@@ -1,9 +1,9 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { ITask } from '@/types/models';
+import { ITask } from '../types/models';
 import { TaskModel } from '../models/index';
 import { FilterQuery } from 'mongoose';
 import { ProjectModel } from '../models/index';
-import { publishToProjectChannel, publishToUserChannel } from '@/lib/ablyUtility';
+import { publishToProjectChannel, publishToUserChannel } from '../lib/ablyUtility';
 
 // Create a new task
 export const createTask = async (data: Partial<ITask>) => {

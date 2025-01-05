@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react';
 import MyHeader from '../components/home/MyHeader';
-import {LoginAuth} from "@/app/components/authentication/forms";
+import {LoginAuth} from "../components/authentication/forms";
 import Link from 'next/link';
 import Spinner from '../components/common/circularLoadingIndicator';
 

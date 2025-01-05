@@ -4,7 +4,7 @@ import { FiSettings, FiLogOut } from "react-icons/fi";
 import { FaTachometerAlt, FaTasks, FaProjectDiagram, FaBell } from "react-icons/fa";
 import Image from "next/image";
 import Link from "next/link";
-import { useAuth } from "@/context/AuthContext";
+import { useAuth } from "./../../../context/AuthContext";
 
 interface SidebarProps {
   isMobileOpen: boolean;

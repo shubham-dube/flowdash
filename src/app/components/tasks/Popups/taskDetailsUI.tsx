@@ -3,9 +3,9 @@ import { FaEdit, FaExpand, FaCompress, FaCircle, FaInfoCircle, FaCalendar, FaPro
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import Cookies from 'js-cookie';
-import { ITask } from '@/types/models';
+import { ITask } from '../../../../types/models';
 import { AvatarWithName, PriorityIndicator, StatusIndicator } from './statusAndPriorityVisual';
-import { DateTimeFormatOptions } from '@/types/ui.props';
+import { DateTimeFormatOptions } from '../../../../types/ui.props';
 
 interface Props {
     task: ITask;

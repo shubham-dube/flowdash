@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
-import { createTask, getTask, updateTask, deleteTask, getTasksByQuery } from '@/services/taskServices';
+import { createTask, getTask, updateTask, deleteTask, getTasksByQuery } from '../../../services/taskServices';
 import { FilterQuery } from 'mongoose';
-import { ITask } from '@/types/models';
+import { ITask } from '../../../types/models';
 
 // POST: Create a task
 export async function POST(request: Request) {

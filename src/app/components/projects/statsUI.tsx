@@ -4,7 +4,7 @@ import jwt from 'jsonwebtoken';
 import { FaCheckCircle, FaProjectDiagram, FaSortNumericDownAlt, FaTasks } from "react-icons/fa";
 import StatLoadingSkeleton from "./skeletons/statLoadingSkeleton";
 import { Realtime } from "ably";
-import { IProject, ITask } from "@/types/models";
+import { IProject, ITask } from "../../../types/models";
 
 const StatsUI = () => {
   const [noOfProjects, setNoOfProjects] = useState<number>(0);

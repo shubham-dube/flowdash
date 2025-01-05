@@ -1,9 +1,9 @@
 'use client';
-import CreateTaskComponent from '@/app/components/tasks/Popups/createTaskPopupUI';
-import FilterComponent from '@/app/components/tasks/Popups/filtersPopupUI';
-import TaskOperationsUI from '@/app/components/tasks/taskOperationsUI';
-import TaskListAndGrid from '@/app/components/tasks/tasksListAndGrid';
-import { ITask, IUser } from '@/types/models';
+import CreateTaskComponent from '../../../../components/tasks/Popups/createTaskPopupUI';
+import FilterComponent from '../../../../components/tasks/Popups/filtersPopupUI';
+import TaskOperationsUI from '../../../../components/tasks/taskOperationsUI';
+import TaskListAndGrid from '../../../../components/tasks/tasksListAndGrid';
+import { ITask, IUser } from '../../../../../types/models';
 import { Realtime } from 'ably';
 import Cookies from 'js-cookie';
 import { useState, useEffect } from 'react';

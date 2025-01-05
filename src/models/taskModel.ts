@@ -1,4 +1,4 @@
-import { ITask } from '@/types/models';
+import { ITask } from '../types/models';
 import mongoose, { Schema } from 'mongoose';
 
 const taskSchema: Schema = new mongoose.Schema({

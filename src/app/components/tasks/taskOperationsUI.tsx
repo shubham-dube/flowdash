@@ -1,4 +1,4 @@
-import { TaskOperationsUIProps } from '@/types/ui.props';
+import { TaskOperationsUIProps } from '../../../types/ui.props';
 import { FaFilter, FaList, FaPlus, FaSearch, FaTh } from 'react-icons/fa';
 import OperationSkeleton from './skeletons/operationsSkeleton';
 

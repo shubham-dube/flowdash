@@ -1,11 +1,11 @@
-import { IProject, ITask } from '@/types/models';
+import { IProject, ITask } from '../../../types/models';
 import { useEffect, useState } from 'react';
 import jwt from 'jsonwebtoken';
 import Cookies from 'js-cookie';
 import { FaClock, FaExclamationCircle, FaEye, FaFlag, FaProjectDiagram, FaUser, } from 'react-icons/fa';
 import { AvatarWithName } from '../tasks/Popups/statusAndPriorityVisual';
 import TaskDetailsUIComponent from '../tasks/Popups/taskDetailsUI';
-import { DateTimeFormatOptions } from '@/types/ui.props';
+import { DateTimeFormatOptions } from '../../../types/ui.props';
 import RecentCompletedTasksSkeleton from '../tasks/skeletons/recentCompletedTaskSkeleton';
 import { Realtime } from 'ably';
 

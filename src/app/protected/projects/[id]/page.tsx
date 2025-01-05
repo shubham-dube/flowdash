@@ -1,18 +1,18 @@
 'use client';
 import { usePathname } from 'next/navigation';
 import Cookies from 'js-cookie';
-import { IProject, ITask, IUser } from '@/types/models';
+import { IProject, ITask, IUser } from '../../../../types/models';
 import { useEffect, useState } from 'react';
-import HeaderMetaData from '@/app/components/projects/detailPage/header';
-import SemiCircleChart from '@/app/components/projects/detailPage/overview/taskMeter';
+import HeaderMetaData from '../../../components/projects/detailPage/header';
+import SemiCircleChart from '../../../components/projects/detailPage/overview/taskMeter';
 import { FaFileAlt } from 'react-icons/fa';
-import ProjectMetaData from '@/app/components/projects/detailPage/overview/metaData';
-import ProjectTasksTabUI from '@/app/components/projects/detailPage/tasks/projectTasks';
-import GanttChart from '@/app/components/projects/detailPage/timeline/ganttChart';
+import ProjectMetaData from '../../../components/projects/detailPage/overview/metaData';
+import ProjectTasksTabUI from '../../../components/projects/detailPage/tasks/projectTasks';
+import GanttChart from '../../../components/projects/detailPage/timeline/ganttChart';
 import { Task } from 'gantt-task-react';
-import ProjectMemberTabUI from '@/app/components/projects/detailPage/members/memberTab';
-import HeaderSkeleton from '@/app/components/projects/detailPage/skeletons/headerSkeleton';
-import OverviewSkeleton from '@/app/components/projects/detailPage/skeletons/overviewSkeleton';
+import ProjectMemberTabUI from '../../../components/projects/detailPage/members/memberTab';
+import HeaderSkeleton from '../../../components/projects/detailPage/skeletons/headerSkeleton';
+import OverviewSkeleton from '../../../components/projects/detailPage/skeletons/overviewSkeleton';
 import { Realtime } from 'ably';
 
 

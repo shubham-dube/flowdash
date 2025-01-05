@@ -1,4 +1,4 @@
-import { IProject } from '@/types/models';
+import { IProject } from '../types/models';
 import mongoose, { Schema } from 'mongoose';
 
 const projectSchema: Schema = new mongoose.Schema({

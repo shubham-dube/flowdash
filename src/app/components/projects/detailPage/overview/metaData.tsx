@@ -1,7 +1,7 @@
 import {  FaCalendar, FaCheckCircle, FaEnvelope,  FaTasks, FaUsers,  } from 'react-icons/fa';
-import { AvatarWithName } from '@/app/components/tasks/Popups/statusAndPriorityVisual';
-import { IProject } from '@/types/models';
-import { DateTimeFormatOptions } from '@/types/ui.props';
+import { AvatarWithName } from '../../../../components/tasks/Popups/statusAndPriorityVisual';
+import { IProject } from '../../../../../types/models';
+import { DateTimeFormatOptions } from '../../../../../types/ui.props';
 
 const ProjectMetaData = ({ project }: { project: IProject }) => {
 

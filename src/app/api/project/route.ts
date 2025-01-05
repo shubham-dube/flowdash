@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
-import { createProject, getProject, updateProject, deleteProject, getProjectsByQuery } from '@/services/projectServices';
+import { createProject, getProject, updateProject, deleteProject, getProjectsByQuery } from '../../../services/projectServices';
 import { FilterQuery } from 'mongoose';
-import { IProject } from '@/types/models';
+import { IProject } from '../../../types/models';
 
 // POST: Create a project
 export async function POST(request: Request) {

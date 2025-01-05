@@ -1,9 +1,9 @@
 import { useEffect, useState } from 'react';
 import { FaCheckCircle, FaClock,  FaFlag,  FaSortNumericDown } from 'react-icons/fa';
-import { DateTimeFormatOptions, MembersListAndGridProps } from '@/types/ui.props';
-import useDeviceSize from '@/app/components/common/deviceUtils';
-import { AvatarWithName } from '@/app/components/tasks/Popups/statusAndPriorityVisual';
-import { IUser } from '@/types/models';
+import { DateTimeFormatOptions, MembersListAndGridProps } from '../../../../../types/ui.props';
+import useDeviceSize from '../../../../components/common/deviceUtils';
+import { AvatarWithName } from '../../../../components/tasks/Popups/statusAndPriorityVisual';
+import { IUser } from '../../../../../types/models';
 
 const MembersListAndGrid: React.FC<MembersListAndGridProps> = ({ teamMembers, isCardView, setIsCardView, searchQuery }) => {
     const [members, setMembers] = useState<IUser[]>([]);

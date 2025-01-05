@@ -4,9 +4,9 @@ import { FaUsers, FaSearch } from 'react-icons/fa';
 import 'react-datepicker/dist/react-datepicker.css';
 import { debounce } from 'lodash';
 import Cookies from 'js-cookie';
-import { IProject, IUser } from '@/types/models';
+import { IProject, IUser } from '../../../../../types/models';
 import jwt from 'jsonwebtoken';
-import { AddMemberUIProps } from '@/types/ui.props';
+import { AddMemberUIProps } from '../../../../../types/ui.props';
 
 const AddMemberComponent: React.FC<AddMemberUIProps> = ({ fetchProjects, projectId, setShowAddMemberPopup, membersAlready }) => {
     const [selectedTeamMembers, setSelectedTeamMembers] = useState<string[]>([]);

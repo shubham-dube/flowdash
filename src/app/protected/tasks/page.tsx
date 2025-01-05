@@ -1,15 +1,15 @@
 'use client';
-import CreateTaskComponent from '@/app/components/tasks/Popups/createTaskPopupUI';
-import FilterComponent from '@/app/components/tasks/Popups/filtersPopupUI';
-import RecentTasksUI from '@/app/components/tasks/recentTasksUI';
-import TaskOperationsUI from '@/app/components/tasks/taskOperationsUI';
-import TaskListAndGrid from '@/app/components/tasks/tasksListAndGrid';
-import { ITask } from '@/types/models';
+import CreateTaskComponent from '../../components/tasks/Popups/createTaskPopupUI';
+import FilterComponent from '../../components/tasks/Popups/filtersPopupUI';
+import RecentTasksUI from '../../components/tasks/recentTasksUI';
+import TaskOperationsUI from '../../components/tasks/taskOperationsUI';
+import TaskListAndGrid from '../../components/tasks/tasksListAndGrid';
+import { ITask } from '../../../types/models';
 import Cookies from 'js-cookie';
 import { useState, useEffect } from 'react';
 import jwt from 'jsonwebtoken';
 import { Realtime } from 'ably';
-import TasksChartUI from '@/app/components/tasks/taskChart';
+import TasksChartUI from '../../components/tasks/taskChart';
 import { motion, AnimatePresence } from 'framer-motion';
 
 const TaskPage = () => {
