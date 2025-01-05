@@ -8,8 +8,8 @@ import SemiCircleChart from '../../../components/projects/detailPage/overview/ta
 import { FaFileAlt } from 'react-icons/fa';
 import ProjectMetaData from '../../../components/projects/detailPage/overview/metaData';
 import ProjectTasksTabUI from '../../../components/projects/detailPage/tasks/projectTasks';
-import GanttChart from '../../../components/projects/detailPage/timeline/ganttChart';
-import { Task } from 'gantt-task-react';
+// import GanttChart from '../../../components/projects/detailPage/timeline/ganttChart';
+// import { Task } from 'gantt-task-react';
 import ProjectMemberTabUI from '../../../components/projects/detailPage/members/memberTab';
 import HeaderSkeleton from '../../../components/projects/detailPage/skeletons/headerSkeleton';
 import OverviewSkeleton from '../../../components/projects/detailPage/skeletons/overviewSkeleton';
@@ -23,16 +23,16 @@ const ProjectDetails = () => {
     const [activeTab, setActiveTab] = useState('Overview');
     const [loading, setLoading] = useState<boolean>(false);
 
-    const convertITaskToTask = (iTask: ITask): Task => {
-        return {
-            id: iTask._id.toString(),
-            type: "task",
-            name: iTask.title,
-            start: new Date(iTask.createdAt),
-            end: iTask.deadline ? new Date(iTask.deadline) : new Date(),
-            progress: 100,
-        };
-    };
+    // const convertITaskToTask = (iTask: ITask): Task => {
+    //     return {
+    //         id: iTask._id.toString(),
+    //         type: "task",
+    //         name: iTask.title,
+    //         start: new Date(iTask.createdAt),
+    //         end: iTask.deadline ? new Date(iTask.deadline) : new Date(),
+    //         progress: 100,
+    //     };
+    // };
 
     const renderContent = () => {
         switch (activeTab) {
@@ -67,13 +67,14 @@ const ProjectDetails = () => {
             case 'Notes':
                 return <div>Project Notes Content</div>;
             case 'Timeline':
-                const tasksGantt: Task[] = [];
-                const length: number = project?.tasks.length as number;
-                for (let i = 0; i < length; i++) {
-                    const task = project?.tasks[i] as ITask;
-                    tasksGantt.push(convertITaskToTask(task));
-                }
-                return <div className='mt-4'><GanttChart tasks={tasksGantt} /></div>;
+                // const tasksGantt: Task[] = [];
+                // const length: number = project?.tasks.length as number;
+                // for (let i = 0; i < length; i++) {
+                //     const task = project?.tasks[i] as ITask;
+                //     tasksGantt.push(convertITaskToTask(task));
+                // } 
+                // <GanttChart tasks={tasksGantt} />
+                return <div className='mt-4'>No timeline</div>;
             case 'Members':
                 return <ProjectMemberTabUI id={id as string} teamMembers={project?.teamMembers as IUser[]} fetchProjects={fetchProject} />
             default:
