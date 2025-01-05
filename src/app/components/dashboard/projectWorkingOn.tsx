@@ -43,7 +43,7 @@ const ProjectsWorkingOn = () => {
     }, []);
 
     return (
-        <div className="w-full lg:w-1/3 space-y-5">
+        <div className="">
             <div className="bg-white dark:bg-gray-800 p-5 rounded-xl shadow lg:min-h-screen">
                 {!loading ? <h4 className="text-md font-semibold justify-between flex items-center mb-3 text-gray-500 dark:text-gray-200">
                     <span>PROJECTS</span>

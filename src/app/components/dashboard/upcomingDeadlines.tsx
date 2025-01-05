@@ -7,6 +7,7 @@ import { ITask } from "@/types/models";
 import TaskDetailsUIComponent from "../tasks/Popups/taskDetailsUI";
 import { DateTimeFormatOptions } from "@/types/ui.props";
 import OngoingTasksSkeleton from "./skeletons/onGoingTaskSkeleton";
+import { AnimatePresence, motion } from "framer-motion";
 
 const UpcomingDeadlines = () => {
     const [tasks, setTasks] = useState<ITask[]>([]);
@@ -70,21 +71,49 @@ const UpcomingDeadlines = () => {
         <div className="bg-white dark:bg-gray-800 p-5 rounded-xl w-full shadow">
             <h4 className="text-md font-semibold mb-3 text-gray-500 dark:text-gray-200">UPCOMING DEADLINES (Top 20)</h4>
             <ul className="space-y-2">
-                {tasks.map((task) => (
-                    <li key={task._id} className="flex items-center justify-between bg-gray-100 dark:bg-gray-700 p-3 rounded rounded-lg">
-                        <span>{task.title}</span>
-                        <span className="text-red-500 text-sm">{formatDateString(task.deadline as Date, false)}</span>
-                        <span className="text-blue-500 mr-3 hover:cursor-pointer"><FaEye onClick={() => {
-                            setClickedTask(task._id);
-                            setTaskDetailsPopup(true);
-                        }} /></span>
-                    </li>
-                ))
-                }
+            <AnimatePresence>
+                    {tasks.map((task) => (
+                        <motion.li 
+                            key={task._id} 
+                            initial={{ opacity: 0, scale: 0.95 }}
+                            animate={{ opacity: 1, scale: 1 }}
+                            exit={{ opacity: 0, scale: 0.9 }}
+                            transition={{ duration: 0.3 }}
+                            className="flex items-center justify-between bg-gray-100 dark:bg-gray-700 p-3 rounded-lg"
+                        >
+                            <span className="w-[60%]">{task.title}</span>
+                            <div className="flex items-center justify-end w-[40%]">
+                                <span className="text-red-500 text-sm mr-5">
+                                    {formatDateString(task.deadline as Date, false)}
+                                </span>
+                                <motion.span 
+                                    whileHover={{ scale: 1.2 }} 
+                                    whileTap={{ scale: 0.9 }} 
+                                    className="text-blue-500 mr-3 hover:cursor-pointer"
+                                >
+                                    <FaEye onClick={() => {
+                                        setClickedTask(task._id);
+                                        setTaskDetailsPopup(true);
+                                    }} />
+                                </motion.span>
+                            </div>
+                        </motion.li>
+                    ))}
+                </AnimatePresence>
             </ul>
-            <div className='absolute z-50'>
-                {taskDetailsPopup && <TaskDetailsUIComponent task={tasks.find(obj => obj._id === clickedTask) as ITask} setShowTaskDetailsPopup={setTaskDetailsPopup} fetchTasks={fetchTasks} />}
-            </div>
+            <AnimatePresence>
+                {taskDetailsPopup && (
+                    <motion.div
+                        className="absolute z-50"
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        exit={{ opacity: 0 }}
+                        transition={{ duration: 0.3 }}
+                    >
+                        <TaskDetailsUIComponent task={tasks.find(obj => obj._id === clickedTask) as ITask} setShowTaskDetailsPopup={setTaskDetailsPopup} fetchTasks={fetchTasks} />
+                    </motion.div>
+                )}
+            </AnimatePresence>
         </div>
     )
 }
