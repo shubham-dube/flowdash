@@ -13,6 +13,7 @@ import { Task } from 'gantt-task-react';
 import ProjectMemberTabUI from '@/app/components/projects/detailPage/members/memberTab';
 import HeaderSkeleton from '@/app/components/projects/detailPage/skeletons/headerSkeleton';
 import OverviewSkeleton from '@/app/components/projects/detailPage/skeletons/overviewSkeleton';
+import { Realtime } from 'ably';
 
 
 const ProjectDetails = () => {
@@ -36,7 +37,7 @@ const ProjectDetails = () => {
     const renderContent = () => {
         switch (activeTab) {
             case 'Overview':
-                return loading?<OverviewSkeleton/>:(
+                return loading ? <OverviewSkeleton /> : (
                     <div className="mt-4 space-y-4">
                         <div className='lg:flex w-full gap-4'>
                             <SemiCircleChart tasks={((project?.tasks) ? project.tasks as ITask[] : [])} />
@@ -104,6 +105,22 @@ const ProjectDetails = () => {
         }
     }
 
+    const ably = new Realtime({ key: process.env.NEXT_PUBLIC_ABLY_API_KEY });
+    const userChannel = ably.channels.get(id as string);
+
+    useEffect(() => {
+
+        userChannel.subscribe('projectUpdated', (message) => {
+            const updatedProject: IProject = message.data;
+            setProject(updatedProject);
+        });
+
+        return () => {
+            userChannel.unsubscribe();
+        };
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [id]);
+
 
     useEffect(() => {
         fetchProject();
@@ -120,7 +137,7 @@ const ProjectDetails = () => {
                     deadline={project?.deadline as Date}
                 />}
 
-            {!loading?<div className="flex gap-2 mt-2 overflow-x-auto hide-scrollbar">
+            {!loading ? <div className="flex gap-2 mt-2 overflow-x-auto hide-scrollbar">
                 {['Overview', 'Tasks', 'Notes', 'Timeline', 'Members'].map((tab) => (
                     <button
                         key={tab}
@@ -130,17 +147,17 @@ const ProjectDetails = () => {
                         {tab}
                     </button>
                 ))}
-            </div>:
-            <div className="flex gap-2 mt-2 overflow-x-auto hide-scrollbar">
-                {Array(5)
-                    .fill(null)
-                    .map((_, index) => (
-                        <div
-                            key={index}
-                            className="flex-1 px-4 py-5 bg-gray-200 dark:bg-gray-700 rounded-lg animate-pulse"
-                        ></div>
-                    ))}
-            </div>}
+            </div> :
+                <div className="flex gap-2 mt-2 overflow-x-auto hide-scrollbar">
+                    {Array(5)
+                        .fill(null)
+                        .map((_, index) => (
+                            <div
+                                key={index}
+                                className="flex-1 px-4 py-5 bg-gray-200 dark:bg-gray-700 rounded-lg animate-pulse"
+                            ></div>
+                        ))}
+                </div>}
 
 
             <div className="flex flex-col gap-2 mt-2">

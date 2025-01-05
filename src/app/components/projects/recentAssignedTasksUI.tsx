@@ -7,6 +7,7 @@ import { AvatarWithName } from '../tasks/Popups/statusAndPriorityVisual';
 import TaskDetailsUIComponent from '../tasks/Popups/taskDetailsUI';
 import { DateTimeFormatOptions } from '@/types/ui.props';
 import RecentCompletedTasksSkeleton from '../tasks/skeletons/recentCompletedTaskSkeleton';
+import { Realtime } from 'ably';
 
 
 const RecentAssignedTasksUI: React.FC<{ projects: IProject[] }> = ({ }) => {
@@ -39,18 +40,50 @@ const RecentAssignedTasksUI: React.FC<{ projects: IProject[] }> = ({ }) => {
 
   function formatDateString(dateString: Date) {
     const date = new Date(dateString);
-
     const options: Partial<DateTimeFormatOptions> = {
       month: 'short',
       day: 'numeric',
       hour: '2-digit',
       minute: '2-digit',
-      hour12: false
+      hour12: false,
     };
-
-    const formattedDate = date.toLocaleString('en-US', options);
-    return formattedDate;
+    return date.toLocaleString('en-US', options);
   }
+
+  const ably = new Realtime({ key: process.env.NEXT_PUBLIC_ABLY_API_KEY });
+  const userChannel = ably.channels.get(jwtPayload._id);
+
+  useEffect(() => {
+    userChannel.subscribe('taskUpdated', (message) => {
+      const updatedTask: ITask = message.data;
+      setRecentAssignedTasks((prevTasks) => prevTasks.map((task) =>
+        task._id === updatedTask._id ? updatedTask : task
+      ));
+    });
+
+    userChannel.subscribe('taskDeleted', (message) => {
+      const deletedTask: ITask = message.data;
+      setRecentAssignedTasks((prevTasks) =>
+        prevTasks.filter((task) => task._id !== deletedTask._id)
+      );
+    });
+
+    userChannel.subscribe('taskCreated', (message) => {
+      const newTask: ITask = message.data;
+      setRecentAssignedTasks((prevTasks) => {
+        const taskExists = prevTasks.some((task) => task._id === newTask._id);
+        if (taskExists) {
+          return prevTasks;
+        }
+        return [newTask, ...prevTasks.slice(0, 2)]; 
+      });
+    });
+
+    return () => {
+      userChannel.unsubscribe();
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [jwtPayload._id]);
 
   useEffect(() => {
     fetchRecentAssignedTasks();

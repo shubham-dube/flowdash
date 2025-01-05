@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { FaCheckCircle, FaCircle, FaClock, FaEllipsisV, FaFlag, FaProjectDiagram, FaSortNumericDown, FaUser } from 'react-icons/fa';
+import { FaCheckCircle, FaCircle, FaClock, FaEllipsisH, FaEllipsisV, FaFlag, FaProjectDiagram, FaSortNumericDown, FaUser } from 'react-icons/fa';
 import useDeviceSize from '../common/deviceUtils';
 import { DateTimeFormatOptions, ProjectListAndGridProps } from '@/types/ui.props';
 import { AvatarWithName } from '../tasks/Popups/statusAndPriorityVisual';
@@ -125,14 +125,7 @@ const ProjectListAndGrid: React.FC<ProjectListAndGridProps> = ({ projects, isCar
                                                 className="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700"
                                                 onClick={() => toggleProjectMenu(project._id)}
                                             >
-                                                <svg
-                                                    className="w-5 h-5"
-                                                    fill="currentColor"
-                                                    viewBox="0 0 20 20"
-                                                    xmlns="http://www.w3.org/2000/svg"
-                                                >
-                                                    <path d="M6 10a2 2 0 11-4 0 2 2 0 014 0zm6 0a2 2 0 11-4 0 2 2 0 014 0zm6 0a2 2 0 11-4 0 2 2 0 014 0z" />
-                                                </svg>
+                                                <FaEllipsisH/>
                                             </button>
                                             {menuOpen === project._id && (
                                                 <div className="absolute right-0 w-40 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-md">
@@ -171,7 +164,7 @@ const ProjectListAndGrid: React.FC<ProjectListAndGridProps> = ({ projects, isCar
                                         <div className="flex items-center">
                                             {project.teamMembers.map((member, index) => (
                                                 <div
-                                                    key={member.id}
+                                                    key={member._id}
                                                     className={`relative rounded-full border-2 border-white dark:border-gray-800 overflow-hidden ${index > 0 ? '-ml-3' : ''
                                                         }`}
                                                 >

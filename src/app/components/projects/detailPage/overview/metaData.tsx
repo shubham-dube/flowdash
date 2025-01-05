@@ -39,7 +39,7 @@ const ProjectMetaData = ({ project }: { project: IProject }) => {
                     <div className="flex items-center w-1/2">
                         {project?.teamMembers.map((member, index) => (
                             <div
-                                key={member.id}
+                                key={member._id}
                                 className={`relative rounded-full border-2 border-white dark:border-gray-800 overflow-hidden ${index > 0 ? '-ml-3' : ''
                                     }`}
                             >

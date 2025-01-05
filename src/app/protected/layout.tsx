@@ -1,10 +1,13 @@
 'use client';
 
-import { useState } from "react";
+import Cookies from 'js-cookie';
+import { useState, useEffect } from 'react';
+import jwt from 'jsonwebtoken';
 import Sidebar from "../components/common/sidebar";
 import MobileNav from "../components/common/mobileNav";
 import Topbar from "../components/common/topbar";
 import PrivateRoute from "@/lib/PrivateRoute";
+import { Realtime } from "ably";
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   const [isMobileOpen, setIsMobileOpen] = useState(false);
@@ -13,7 +16,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
 
   const toggleMobileSidebar = () => setIsMobileOpen(!isMobileOpen);
   const changeTab = (tabName: string) => {
-    setTab(tabName)
+    setTab(tabName);
   };
 
   const toggleFullScreen = () => {
@@ -27,6 +30,45 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           }
       }
   };
+
+  const token: string | undefined = Cookies.get('jwtToken') ;
+
+  const ably = new Realtime({ key: process.env.NEXT_PUBLIC_ABLY_API_KEY }); 
+  const userChannel = ably.channels.get('user-presence');
+
+  const sendPresenceUpdate = (isActive: boolean) => {
+    if (!token) return;
+  
+    const jwtPayload: JWTPayload = jwt.decode(token) as JWTPayload;
+  
+    userChannel.publish('update-presence', {
+      userId: jwtPayload._id,
+      isActive,
+      lastActiveAt: new Date().toISOString(),
+    });
+  };
+  
+  useEffect(() => {
+    sendPresenceUpdate(true);
+  
+    const handleVisibilityChange = () => {
+      sendPresenceUpdate(document.visibilityState === 'visible');
+    };
+  
+    const handleBeforeUnload = () => {
+      sendPresenceUpdate(false);
+    };
+  
+    window.addEventListener('beforeunload', handleBeforeUnload);
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+  
+    return () => {
+      sendPresenceUpdate(false);
+      window.removeEventListener('beforeunload', handleBeforeUnload);
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
+    };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return (
     <div className="h-screen flex bg-gray-100 dark:bg-gray-900">

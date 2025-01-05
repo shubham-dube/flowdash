@@ -37,3 +37,13 @@ body {
   background: var(--background);
   font-family: 'poppins', sans-serif;
 }
+
+/* Ensure light mode by default for SSR */
+html {
+  color-scheme: light;
+}
+
+/* Dark mode override */
+html.dark {
+  color-scheme: dark;
+}

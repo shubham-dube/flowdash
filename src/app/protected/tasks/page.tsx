@@ -8,6 +8,7 @@ import { ITask } from '@/types/models';
 import Cookies from 'js-cookie';
 import { useState, useEffect } from 'react';
 import jwt from 'jsonwebtoken';
+import { Realtime } from 'ably';
 import TasksChartUI from '@/app/components/tasks/taskChart';
 
 const TaskPage = () => {
@@ -78,7 +79,7 @@ const TaskPage = () => {
   const token: string = Cookies.get('jwtToken') as string;
   const jwtPayload: JWTPayload = jwt.decode(token) as JWTPayload;
 
-  // Fetch tasks from API
+
   const fetchTasks = async () => {
     try {
       setLoading(true);
@@ -98,6 +99,43 @@ const TaskPage = () => {
       console.error('Error fetching tasks:', error);
     }
   };
+
+  const ably = new Realtime({ key: process.env.NEXT_PUBLIC_ABLY_API_KEY }); 
+  const userChannel = ably.channels.get(jwtPayload._id);
+
+  useEffect(() => {
+
+    userChannel.subscribe('taskUpdated', (message) => {
+      const updatedTask:ITask = message.data;
+      setTasks((prevTasks) =>
+        prevTasks.map((task) =>
+          task._id === updatedTask._id ? updatedTask : task
+        )
+      );
+    });
+
+    userChannel.subscribe('taskDeleted', (message) => {
+      const deletedTask:ITask = message.data;
+      setTasks((prevTasks) => prevTasks.filter((task) => task._id !== deletedTask._id));
+    });
+
+    userChannel.subscribe('taskCreated', (message) => {
+      const newTask:ITask = message.data;
+      setTasks((prevTasks) => {
+        const taskExists = prevTasks.some((task) => task._id === newTask._id);
+        if (taskExists) {
+            return prevTasks;
+        } else {
+            return [newTask, ...prevTasks];
+        }
+      });
+    });
+
+    return () => {
+      userChannel.unsubscribe();
+    };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [jwtPayload._id]);
 
   useEffect(() => {
     fetchTasks();
@@ -132,7 +170,7 @@ const TaskPage = () => {
         setShowFilterPopup={setShowFilterPopup} applyFilters={applyFilters} resetFilters={resetFilters} />}
 
       {/* Create Task Popup */}
-      {showCreateTaskPopup && <CreateTaskComponent setShowCreateTaskPopup={setShowCreateTaskPopup} fetchTasks={fetchTasks} />}
+      {showCreateTaskPopup && <CreateTaskComponent setShowCreateTaskPopup={setShowCreateTaskPopup} fetchTasks={fetchTasks} isRelatedProjectFeild={true}/>}
 
 
     </main>

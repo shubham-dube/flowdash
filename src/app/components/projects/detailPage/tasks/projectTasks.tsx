@@ -4,6 +4,7 @@ import FilterComponent from '@/app/components/tasks/Popups/filtersPopupUI';
 import TaskOperationsUI from '@/app/components/tasks/taskOperationsUI';
 import TaskListAndGrid from '@/app/components/tasks/tasksListAndGrid';
 import { ITask, IUser } from '@/types/models';
+import { Realtime } from 'ably';
 import Cookies from 'js-cookie';
 import { useState, useEffect } from 'react';
 
@@ -98,6 +99,43 @@ const ProjectTasksTabUI: React.FC<{ id: string, members: IUser[] }> = ({ id, mem
         }
     };
 
+    const ably = new Realtime({ key: process.env.NEXT_PUBLIC_ABLY_API_KEY }); 
+      const userChannel = ably.channels.get(id);
+    
+      useEffect(() => {
+    
+        userChannel.subscribe('taskUpdated', (message) => {
+          const updatedTask = message.data;
+          setTasks((prevTasks) =>
+            prevTasks.map((task) =>
+              task._id === updatedTask._id ? updatedTask : task
+            )
+          );
+        });
+    
+        userChannel.subscribe('taskDeleted', (message) => {
+          const deletedTask = message.data;
+          setTasks((prevTasks) => prevTasks.filter((task) => task._id !== deletedTask._id));
+        });
+    
+        userChannel.subscribe('taskCreated', (message) => {
+          const newTask = message.data;
+          setTasks((prevTasks) => {
+            const taskExists = prevTasks.some((task) => task._id === newTask._id);
+            if (taskExists) {
+                return prevTasks;
+            } else {
+                return [newTask, ...prevTasks];
+            }
+          });
+        });
+    
+        return () => {
+          userChannel.unsubscribe();
+        };
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+      }, [id]);
+
     useEffect(() => {
         fetchTasks();
         console.log(id);
@@ -108,11 +146,10 @@ const ProjectTasksTabUI: React.FC<{ id: string, members: IUser[] }> = ({ id, mem
     return (
         <div className="space-y-4">
 
-
             {/* Tasks Operation Section */}
             <TaskOperationsUI setSearchQuery={setSearchQuery} setCurrentPage={setCurrentPage}
             setShowFilterPopup={setShowFilterPopup} setShowCreateTaskPopup={setShowCreateTaskPopup} setIsCardView={setIsCardView}
-            isCardView={isCardView} loading={loading} />
+            isCardView={isCardView} loading={false} />
 
 
             {/* Tasks Section */}

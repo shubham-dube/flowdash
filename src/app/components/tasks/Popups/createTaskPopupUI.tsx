@@ -1,39 +1,41 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { useEffect, useState } from 'react';
 import { FaExclamationCircle, FaCheckCircle, FaProjectDiagram, FaUsers, FaClock, FaArrowRight, FaSearch, FaTasks, FaArrowLeft } from 'react-icons/fa';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import { debounce } from 'lodash';
 import Cookies from 'js-cookie';
-import { IProject, ITask, IUser } from '@/types/models';
 import jwt from 'jsonwebtoken';
 import { CreateTaskUIProps } from '@/types/ui.props';
+import { IProject, ITask, IUser } from '@/types/models';
 
-const CreateTaskComponent: React.FC<CreateTaskUIProps> = ({ fetchTasks, setShowCreateTaskPopup, isRelatedProjectFeild=true, members=[], projectId="" }) => {
+const CreateTaskComponent: React.FC<CreateTaskUIProps> = ({ fetchTasks, setShowCreateTaskPopup, isRelatedProjectFeild = true, members = [], projectId = "" }) => {
     const [priority, setPriority] = useState<string>("");
     const [status, setStatus] = useState<string>("");
     const [title, setTitle] = useState<string>("");
     const [description, setDescription] = useState<string>("");
-    const [relatedProject, setRelatedProject] = useState<string>("");
+    const [relatedProject, setRelatedProject] = useState<string>(projectId);
     const [selectedTeamMembers, setSelectedTeamMembers] = useState<string[]>([]);
     const [deadline, setDeadline] = useState<Date | null>(null);
     const [selectedTab, setSelectedTab] = useState<number>(0);
     const [projects, setProjects] = useState<IProject[]>([]);
-    const [projectMembers, setProjectMembers] = useState<IUser[]>([]);
+    const [projectMembers, setProjectMembers] = useState<IUser[]>(members);
 
-    const tabs = ["titleAndDescription", "priority", "status", "relatedProject", "assignedTo", "deadline"];
+    const tabs = isRelatedProjectFeild
+        ? ["titleAndDescription", "priority", "status", "relatedProject", "assignedTo", "deadline"]
+        : ["titleAndDescription", "priority", "status", "assignedTo", "deadline"];
+
     const tabsWithIcons = [
         { label: "Title & Description", icon: FaTasks, tab: 0 },
         { label: "Priority", icon: FaExclamationCircle, tab: 1 },
         { label: "Status", icon: FaCheckCircle, tab: 2 },
-        { label: "Assign To", icon: FaUsers, tab: 4 },
-        { label: "Deadline", icon: FaClock, tab: 5 },
-    ]
+        ...(isRelatedProjectFeild ? [{ label: "Related Project", icon: FaProjectDiagram, tab: 3 }] : []),
+        { label: "Assign To", icon: FaUsers, tab: isRelatedProjectFeild ? 4 : 3 },
+        { label: "Deadline", icon: FaClock, tab: isRelatedProjectFeild ? 5 : 4 },
+    ];
 
     const token: string = Cookies.get('jwtToken')!;
 
     const createTask = async () => {
-
         const jwtPayload: JWTPayload = jwt.decode(token) as JWTPayload;
 
         const task: Partial<ITask> = {
@@ -81,7 +83,7 @@ const CreateTaskComponent: React.FC<CreateTaskUIProps> = ({ fetchTasks, setShowC
         }
     }, 300);
 
-    const fetchProjectandMembers = async (projectId: string) => {
+    const fetchProjectMembers = async (projectId: string) => {
         try {
             const response = await fetch(`/api/project?getOneProject=${projectId}`, {
                 headers: { Authorization: `Bearer ${token}` },
@@ -91,7 +93,14 @@ const CreateTaskComponent: React.FC<CreateTaskUIProps> = ({ fetchTasks, setShowC
         } catch (error) {
             console.error('Error fetching project members:', error);
         }
-    }
+    };
+
+    useEffect(() => {
+        if (!isRelatedProjectFeild) {
+            setRelatedProject(projectId);
+            setProjectMembers(members);
+        }
+    }, [isRelatedProjectFeild, members, projectId]);
 
     const renderTabOptions = () => {
         switch (tabs[selectedTab]) {
@@ -121,15 +130,13 @@ const CreateTaskComponent: React.FC<CreateTaskUIProps> = ({ fetchTasks, setShowC
                     <div className="p-4">
                         <h3 className="text-lg mb-2 font-semibold">Priority</h3>
                         <select
-                            title='priority'
-                            name='priority'
                             value={priority}
                             onChange={(e) => setPriority(e.target.value)}
                             className="w-full p-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
                         >
                             <option value="" disabled>Select Priority</option>
-                            {['Very-Low', 'Low', 'Medium', 'High', 'Very-High'].map((level) => (
-                                <option key={level.toLowerCase()} value={level.toLowerCase()}>{level}</option>
+                            {["Very-Low", "Low", "Medium", "High", "Very-High"].map((level) => (
+                                <option key={level} value={level.toLowerCase()}>{level}</option>
                             ))}
                         </select>
                     </div>
@@ -139,15 +146,13 @@ const CreateTaskComponent: React.FC<CreateTaskUIProps> = ({ fetchTasks, setShowC
                     <div className="p-4">
                         <h3 className="text-lg mb-2 font-semibold">Status</h3>
                         <select
-                            title='status'
-                            name='status'
                             value={status}
                             onChange={(e) => setStatus(e.target.value)}
                             className="w-full p-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
                         >
                             <option value="" disabled>Select Status</option>
-                            {['To-Do', 'In-Progress', 'Completed', 'Blocked', 'In-Review'].map((level) => (
-                                <option key={level.toLowerCase()} value={level.toLowerCase()}>{level}</option>
+                            {["To-Do", "In-Progress", "Completed", "Blocked", "In-Review"].map((level) => (
+                                <option key={level} value={level.toLowerCase()}>{level}</option>
                             ))}
                         </select>
                     </div>
@@ -166,12 +171,10 @@ const CreateTaskComponent: React.FC<CreateTaskUIProps> = ({ fetchTasks, setShowC
                             />
                         </div>
                         <select
-                            title='projects'
-                            name='projects'
                             value={relatedProject}
                             onChange={(e) => {
                                 setRelatedProject(e.target.value);
-                                fetchProjectandMembers(e.target.value);
+                                fetchProjectMembers(e.target.value);
                             }}
                             className="w-full p-2 border border-gray-300 rounded mt-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
                         >
@@ -185,21 +188,15 @@ const CreateTaskComponent: React.FC<CreateTaskUIProps> = ({ fetchTasks, setShowC
             case 'assignedTo':
                 return (
                     <div className="p-4">
-                        <h3 className="text-lg mb-1 font-semibold">Assign To</h3>
-                        <p className='mb-3'><b>Note: </b> Please Select one of any project to get their members.</p>
-                        <p>Choose any number of members by using -CTRL-</p>
+                        <h3 className="text-lg mb-2 font-semibold">Assign To</h3>
                         <select
-                            title='assignedTo'
-                            name='assignedTo'
                             multiple
                             value={selectedTeamMembers}
-                            onChange={(e) =>
-                                setSelectedTeamMembers([...e.target.selectedOptions].map((option) => option.value))
-                            }
+                            onChange={(e) => setSelectedTeamMembers([...e.target.selectedOptions].map(option => option.value))}
                             className="w-full p-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500 h-36"
                         >
-                            {projectMembers.map((user) => (
-                                <option key={user._id} value={user._id}>{user.displayName}</option>
+                            {projectMembers.map((member) => (
+                                <option key={member._id} value={member._id}>{member.displayName}</option>
                             ))}
                         </select>
                     </div>
@@ -220,16 +217,6 @@ const CreateTaskComponent: React.FC<CreateTaskUIProps> = ({ fetchTasks, setShowC
                 return null;
         }
     };
-
-    useEffect(() => {
-        if(isRelatedProjectFeild){
-            tabsWithIcons.splice(3, 0, { label: "relatedProject", icon: FaProjectDiagram, tab: 3 },);
-        } else {
-            setProjectMembers(members);
-            setRelatedProject(projectId);
-        }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, []);
 
     return (
         <div className="fixed inset-0 bg-gray-900 bg-opacity-50 flex items-center justify-center">
@@ -265,13 +252,14 @@ const CreateTaskComponent: React.FC<CreateTaskUIProps> = ({ fetchTasks, setShowC
                     </div>
                     <div className="flex-1 pl-4">{renderTabOptions()}</div>
                 </div>
-                
+
                 <div className='flex md:hidden justify-around border-t border-gray-300 dark:border-gray-700 pt-3 mt-3'>
-                    <button onClick={()=> setSelectedTab((selectedTab>0)?selectedTab-1:5)}>
-                    <FaArrowLeft className="text-sm text-gray-500 dark:text-gray-400" />
+                    <button onClick={() => setSelectedTab((selectedTab > 0) ? selectedTab - 1 : tabs.length - 1)}>
+                        <FaArrowLeft className="text-sm text-gray-500 dark:text-gray-400" />
                     </button>
-                    <button onClick={()=>setSelectedTab(selectedTab<5?selectedTab + 1:0)}>
-                    <FaArrowRight className="text-sm text-gray-500 dark:text-gray-400" />
+                    <button onClick={() => setSelectedTab((selectedTab < tabs.length - 1) ? selectedTab + 1 : 0)}>
+                        <FaArrowRight className="text-sm text-gray-500 dark:text-gray-400" />
+
                     </button>
                 </div>
                 <div className="flex justify-end mt-3 border-t border-gray-300 dark:border-gray-700 pt-3">

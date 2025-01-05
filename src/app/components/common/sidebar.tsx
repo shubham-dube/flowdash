@@ -15,7 +15,7 @@ interface SidebarProps {
 
 const Sidebar: React.FC<SidebarProps> = ({ isMobileOpen, toggleMobileSidebar, selectedTab, changeTab }) => {
   const { logout } = useAuth();
-  
+
   const navItems = [
     { name: "Dashboard", icon: <FaTachometerAlt />, href: "/dashboard" },
     { name: "Projects", icon: <FaProjectDiagram />, href: "/projects" },
@@ -26,7 +26,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isMobileOpen, toggleMobileSidebar, se
   const handleLogout = async () => {
     try {
       const confirm = window.confirm('Are you sure you want to logout?');
-      if(confirm) {
+      if (confirm) {
         await logout();
         console.log("User logged out successfully");
       }
@@ -61,36 +61,39 @@ const Sidebar: React.FC<SidebarProps> = ({ isMobileOpen, toggleMobileSidebar, se
     return (
       <>
         <div className="px-4 py-3">
-          <div className="items-center flex gap-3 dark:hidden">
-          <Image
+          <Link href={"/"}>
+            <div className="items-center flex gap-3 dark:hidden">
+              <Image
                 src="/logo-blue.png"
                 alt="website-name"
-                width={40} 
+                width={40}
                 height={40}
-            />
-          <Image
+              />
+              <Image
                 src="/website-name-blue.png"
                 alt="website-name"
-                width={100} 
+                width={100}
                 height={16}
-                className="mr-2" 
-            />
-          </div>
-          <div className="items-center hidden dark:flex gap-3">
-          <Image
+                className="mr-2"
+              />
+            </div></Link>
+          <Link href={"/"}>
+            <div className="items-center hidden dark:flex gap-3">
+              <Image
                 src="/logo-white.png"
                 alt="website-name"
-                width={40} 
+                width={40}
                 height={40}
-            />
-          <Image
+              />
+              <Image
                 src="/website-name-white.png"
                 alt="website-name"
-                width={100} 
+                width={100}
                 height={16}
-                className="mr-2" 
-            />
-          </div>
+                className="mr-2"
+              />
+            </div>
+          </Link>
         </div>
         <div className="px-4 py-2">
           <input
@@ -123,7 +126,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isMobileOpen, toggleMobileSidebar, se
           </Link>
 
           <button
-             onClick={handleLogout}
+            onClick={handleLogout}
             className="flex items-center gap-4 px-4 py-3 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-md"
           >
             <FiLogOut />

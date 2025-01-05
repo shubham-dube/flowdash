@@ -2,12 +2,20 @@
 import { IProject } from '@/types/models';
 import { ProjectModel } from '../models/index';
 import { FilterQuery } from 'mongoose';
+import { publishToProjectChannel, publishToUserChannel } from '@/lib/ablyUtility';
 
 // Create a new project
 export const createProject = async (data: Partial<IProject>) => {
     try {
         const newProject = new ProjectModel(data);
         await newProject.save();
+
+        const teamMembers: string[] = newProject.teamMembers;
+        const response = await getProject({ _id: newProject._id });
+        teamMembers.forEach((user) => {
+            publishToUserChannel(user, 'projectCreated', response.project);
+        });
+
         return { message: 'Project created successfully', isError: false, project: newProject };
     } catch (error: any) {
         console.error('Error creating project:', error);
@@ -16,7 +24,7 @@ export const createProject = async (data: Partial<IProject>) => {
 };
 
 // Get a project by query
-export const getProject = async (query: FilterQuery<IProject>) => {
+export const getProject = async (query: FilterQuery<IProject>):Promise<{message:string, isError:boolean, project:IProject | null }> => {
     try {
         const project = await ProjectModel.findOne(query).populate('createdBy teamMembers tasks');
         if (!project) {
@@ -31,7 +39,7 @@ export const getProject = async (query: FilterQuery<IProject>) => {
 
 export const getProjectsByQuery = async (query: FilterQuery<IProject>, wantCount: boolean, limit: number = 50, skip: number = 0) => {
     try {
-        if(wantCount){
+        if (wantCount) {
             const count = await ProjectModel.countDocuments(query);
             return { message: 'Projects count retrieved successfully', isError: false, count: count };
         }
@@ -50,6 +58,14 @@ export const updateProject = async (query: FilterQuery<IProject>, updateData: Pa
         if (!updatedProject) {
             return { message: 'Project not found for update', isError: true, project: null };
         }
+
+        const teamMembers: string[] = updatedProject.teamMembers;
+        const response = await getProject({ _id: updatedProject._id });
+        teamMembers.forEach((user) => {
+            publishToUserChannel(user, 'projectUpdated', response.project);
+        });
+        publishToProjectChannel(updatedProject._id, 'projectUpdated', response.project);
+
         return { message: 'Project updated successfully', isError: false, project: updatedProject };
     } catch (error: any) {
         console.error('Error updating project:', error);
@@ -64,6 +80,12 @@ export const deleteProject = async (query: FilterQuery<IProject>) => {
         if (!deletedProject) {
             return { message: 'Project not found for deletion', isError: true, project: null };
         }
+
+        const teamMembers: string[] = deletedProject.teamMembers;
+        teamMembers.forEach((user) => {
+            publishToUserChannel(user, 'projectDeleted', deletedProject);
+        });
+
         return { message: 'Project deleted successfully', isError: false, project: deletedProject };
     } catch (error: any) {
         console.error('Error deleting project:', error);

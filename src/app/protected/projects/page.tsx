@@ -9,6 +9,7 @@ import ProjectOperationsUI from '@/app/components/projects/projectOperationsUI';
 import ProjectListAndGrid from '@/app/components/projects/projectListAndGrid';
 import ProjectFilterComponent from '@/app/components/projects/Popups/projectFiltersPopupUI';
 import CreateProjectComponent from '@/app/components/projects/Popups/createProjectPopupUI';
+import { Realtime } from 'ably';
 
 const ProjectsPage = () => {
   const [projects, setProject] = useState<IProject[]>([]);
@@ -88,6 +89,43 @@ const ProjectsPage = () => {
       console.error('Error fetching tasks:', error);
     }
   };
+
+  const ably = new Realtime({ key: process.env.NEXT_PUBLIC_ABLY_API_KEY }); 
+    const userChannel = ably.channels.get(jwtPayload._id);
+  
+    useEffect(() => {
+  
+      userChannel.subscribe('projectUpdated', (message) => {
+        const updatedProject:IProject = message.data;
+        setProject((prevProjects) =>
+          prevProjects.map((project) =>
+            project._id === updatedProject._id ? updatedProject : project
+          )
+        );
+      });
+  
+      userChannel.subscribe('projectDeleted', (message) => {
+        const deletedProject:IProject = message.data;
+        setProject((prevProjects) => prevProjects.filter((project) => project._id !== deletedProject._id));
+      });
+  
+      userChannel.subscribe('projectCreated', (message) => {
+        const newProject:IProject = message.data;
+        setProject((prevProjects) => {
+          const projectExists = prevProjects.some((project) => project._id === newProject._id);
+          if (projectExists) {
+              return prevProjects;
+          } else {
+              return [newProject, ...prevProjects];
+          }
+        });
+      });
+  
+      return () => {
+        userChannel.unsubscribe();
+      };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [jwtPayload._id]);
 
   useEffect(() => {
     fetchProjects();

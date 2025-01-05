@@ -5,8 +5,9 @@ import { FaClock, FaExclamationCircle, FaFlag, FaProjectDiagram, } from 'react-i
 import { DateTimeFormatOptions } from '@/types/ui.props';
 import jwt from 'jsonwebtoken';
 import RecentCompletedTasksSkeleton from './skeletons/recentCompletedTaskSkeleton';
+import { Realtime } from 'ably';
 
-const RecentTasksUI: React.FC<{ tasks: ITask[] }> = ({  }) => {
+const RecentTasksUI: React.FC<{ tasks: ITask[] }> = ({ }) => {
   const [completedTasks, setCompletedTasks] = useState<ITask[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
 
@@ -46,6 +47,56 @@ const RecentTasksUI: React.FC<{ tasks: ITask[] }> = ({  }) => {
     const formattedDate = date.toLocaleString('en-US', options);
     return formattedDate;
   }
+
+  const ably = new Realtime({ key: process.env.NEXT_PUBLIC_ABLY_API_KEY });
+  const userChannel = ably.channels.get(jwtPayload._id);
+
+  useEffect(() => {
+
+    userChannel.subscribe('taskUpdated', (message) => {
+      const updatedTask: ITask = message.data;
+      setCompletedTasks((prevTasks) =>
+        {
+          const taskExists = prevTasks.some((task) => task._id === updatedTask._id);
+          if(!taskExists && updatedTask.status === 'completed'){
+            return [updatedTask, ...prevTasks];
+          }
+          if (taskExists && updatedTask.status === 'completed') {
+            return prevTasks.map((task) =>
+            task._id === updatedTask._id ? updatedTask : task)
+          } else if(taskExists && updatedTask.status != 'completed'){
+            return prevTasks.filter((task) => task._id !== updatedTask._id);
+          }
+          return prevTasks;
+      }
+      );
+    });
+
+    userChannel.subscribe('taskDeleted', (message) => {
+      const deletedTask: ITask = message.data;
+      setCompletedTasks((prevTasks) => prevTasks.filter((task) => task._id !== deletedTask._id));
+    });
+
+    userChannel.subscribe('taskCreated', (message) => {
+      const newTask: ITask = message.data;
+      setCompletedTasks((prevTasks) => {
+        const taskExists = prevTasks.some((task) => task._id === newTask._id);
+        if (taskExists) {
+          return prevTasks;
+        } else {
+          if (newTask.status == 'completed')
+            return [newTask, ...prevTasks];
+          
+          else return prevTasks;
+        }
+      });
+    });
+
+    return () => {
+      userChannel.unsubscribe();
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [jwtPayload._id]);
 
   useEffect(() => {
     fetchCompletedTasks();
