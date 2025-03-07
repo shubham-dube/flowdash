@@ -11,6 +11,15 @@ interface IUser extends Document{
     joiningDate: Date;
 }
 
+interface IContact extends Document{
+    _id: Types.ObjectId;
+    name: string;
+    email: string;
+    mobile: string;
+    date: Date;
+    message: string;
+}
+
 interface IProject extends Document{
     _id: Types.ObjectId; 
     title: string;
